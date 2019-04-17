@@ -1,28 +1,41 @@
 
-def get_data(channel, freq, T, filename, mode)
+def get_data(channel, freq, T, filename, mode):
 
-	mode = d
+	# mode = "d"
 	try:
-		with open(filename) as f
+		with open(filename) as f:
 			line = f.readlines()
 
-		for i in len(line):
+		for data in line:
 			if mode == "d":
-				print(line[i])
+				print(data)
+			tmp = data.split()
+			if mode == "d":
+				print(len(tmp))
+			if len(tmp) >= 2:
+				# continue/
+				channel.apend(1)
+				freq.append(tmp1[1])
+				T.apend(tmp1[2])
 
-			tmp = line[i].split()
+				# if tmp1[0].isalpha():
+				# 	continue
+	# except AttributeError as e:
+	# 	print(e)
+	# 	print("index err")
+	# 	return -1
 
-			if len(tmp) > 2:
-				continue
+	# else:
+	# 	return 0
 
-			channel = tmp1[0]
-			freq = tmp1[1]
-			T = tmp1[2]
+channel = []
+freq = []
+T = []
 
-			if tmp1[0].isalpha():
-				continue
-	except AttributeError as e:
-		print(e)
+tmp = get_data(channel, freq, T, "i18286_H2O_181223.txt", "d")
+for i in range(0, len(channel)):
+	print(channel[i], end="")
+	print(freq[i], end="")
+	print(T)
 
-	else:
-		return 0
+print(tmp)
