@@ -4,10 +4,10 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
-def find(x, y, peak, snr, width)
+def find(x, y, peak, snr, width):
     
 
-	# for i in range(0, iter - 1)
+	try:
 
 	    MADFM = madfm(y)
 	    x1 = []
@@ -18,12 +18,12 @@ def find(x, y, peak, snr, width)
 	        tmp = 0
 	        x2.append(j)
 	        for k in range(j, width + j):
-                tmp += y[k]
+	            tmp += y[k]
 	        y2.append(tmp)
 
 
 	    for j in range(1, len(y2) - 1):
-	    	if y2[j] - y2[j - 1] > 0 && y[j + 1] - y[j] < 0:
+	    	if y2[j] - y2[j - 1] > 0 and y[j + 1] - y[j] < 0:
 	    		tmp2.append(j)
 
 	    for channel_no in tmp2:
@@ -43,3 +43,9 @@ def find(x, y, peak, snr, width)
 
 	    del x2, y2
 
+	except OverflowError as e:
+		print(e)
+	except RecursionError as e:
+		print(e)
+	except ZeroDivisionError as e:
+		print(e)
