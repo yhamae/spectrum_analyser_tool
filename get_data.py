@@ -11,8 +11,17 @@ class NRODataReduction:
 
 
 	def get_data(self):
+		if 'p' in self.mode:
+			print("------------------------------")
+			print("Parameter   >    " + "len(self.channel) = ", end = "")
+			print(len(self.channel))
+			print("Parameter   >    " + "len(self.freq) = ", end = "")
+			print(len(self.freq))
+			print("Parameter   >    " + "len(self.T) = ", end = "")
+			print(len(self.T))
+			print("Parameter   >    " + "self.filename = ", end = "")
+			print(self.filename)
 
-		# mode = "d"
 		try:
 			with open(self.filename) as f:
 				line = f.readlines()
@@ -20,23 +29,25 @@ class NRODataReduction:
 			for data in line:
 				tmp = data.split()
 
-				if self.mode == "d":
-					print("Debag_mode >    data : ", end="")
+				if 'd' in self.mode:
+					print("------------------------------")
+					print("DebagMode  >    data : ", end="")
 					print(data, end = "")
-					print("Debag_mode >    len(tmp) = ", end="")
+					print("DebagMode  >    len(tmp) = ", end="")
 					print(len(tmp))
-					print("Debag_mode >    tmp = ", end="")
+					print("DebagMode  >    tmp = ", end="")
 					print(tmp)
 
 
 				if len(tmp) > 1 and tmp[0].isnumeric():
-					if self.mode == "d":
-						print("Debag_mode >    !!!found data!!!")
-						print("Debag_mode >    channel = ", end="")
+					if 'd' in self.mode:
+						print("------------------------------")
+						print("DebagMode  >    !!!found data!!!")
+						print("DebagMode  >    channel = ", end="")
 						print(tmp[0])
-						print("Debag_mode >    freq = ", end="")
+						print("DebagMode  >    freq = ", end="")
 						print(tmp[1])
-						print("Debag_mode >    T = ", end="")
+						print("DebagMode  >    T = ", end="")
 						print(tmp[2])
 					self.channel.append(tmp[0])
 					self.freq.append(tmp[1])
@@ -44,21 +55,43 @@ class NRODataReduction:
 
 						
 				# del tmp
-			if self.mode == "d":
+			if 's' in self.mode:
+				print("------------------------------")
 				for i in range(0, len(self.channel)):
-					print(self.channel[i] + "    " + self.freq[i] +  "    " + self.T[i])
+					print("Data > " + self.channel[i] + "    " + self.freq[i] +  "    " + self.T[i])
 				
 
 		except AttributeError as e:
+			print("##############################")
 			print(e)
-			print("index err")
+			print("parameter is bellow!")
+			print("channel = " + self.channel)
+			print("len(freq) = " + len(self.freq))
+			print("len(T) = " + len(self.T))
+			print("filename = " + self.filename)
+			print("mode = " + self.mode)
+			print("##############################")
 			return -1
 		except EOFError as e:
+			print("##############################")
 			print(e)
-			print("Filename: " + self.filename)
+			print("parameter is bellow!")
+			print("channel = " + self.channel)
+			print("len(freq) = " + len(self.freq))
+			print("len(T) = " + len(self.T))
+			print("filename = " + self.filename)
+			print("mode = " + self.mode)
+			print("##############################")
 		except KeyboardInterrupt as e:
+			print("##############################")
 			print(e)
-			print("fource quit!")
+			print("parameter is bellow!")
+			print("channel = " + self.channel)
+			print("len(freq) = " + len(self.freq))
+			print("len(T) = " + len(self.T))
+			print("filename = " + self.filename)
+			print("mode = " + self.mode)
+			print("##############################")
 		else:
 			return 0
 

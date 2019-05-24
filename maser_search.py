@@ -1,27 +1,53 @@
 import numpy as np
-
+import cal
 
 
 
 class SpectrumSearcher:
-	def __init__:
+	def __init__(self):
 		self.x = 0
 		self.y = 0
 		self.peak = 0
 		self.snr  = 0
 		self.width = 0
+		self.mode = 0
+
 
 
 	def find(self):
-	    
+		if 'p' in self.mode:
+			print("------------------------------")
+			print("Parameter   >    " + "len(self.x) = ", end = "")
+			print(len(self.x), end = "")
+			print("    ", end = "")
+			print(type(self.x), end = "")
+			print("    ", end = "")
+			print(type(self.x[0]))
+			print("Parameter   >    " + "len(self.y) = ", end = "")
+			print(len(self.y), end = "")
+			print("    ", end = "")
+			print(type(self.y), end = "")
+			print("    ", end = "")
+			print(type(self.y[0]))
+			print("Parameter   >    " + "len(self.peak) = ", end = "")
+			print(len(self.peak))
+			print("Parameter   >    " + "self.snr = ", end = "")
+			print(self.snr)
+			print("Parameter   >    " + "width = ", end = "")
+			print(self.width)
 
 		try:
 
-		    MADFM = madfm(y)
-		    x1 = []
+		    MADFM = cal.madfm(self.y)
+		    x2 = []
 		    y2 = []
 		    tmp2 = []
 		    tmp3 = []
+
+		    if 'r' in self.mode:
+		    	print("------------------------------")
+		    	print("ResultValue >    " + "MADFM = ", end = "")
+		    	print(MADFM)
 
 		    # チャンネルを積分
 		    for j in range(0, len(self.x) - self.width - 1, self.width + 1):
@@ -41,7 +67,7 @@ class SpectrumSearcher:
 		        if self.y[channel_no] >= self.snr * MADFM:
 		            tmp3.append(channel_no)
 		    # 輝線が見つからなかった場合通知
-		    if tmp3 == NULL:
+		    if not tmp3:
 		    	print("##### Can not find peak channel!#####")
 
 		    # 輝線がある範囲の中で、最大値を記録
@@ -66,11 +92,3 @@ class SpectrumSearcher:
 			# 0で割っている
 			print(e)
 
-class cal:
-	def MADFM(x):
-		med = statistics.median(x)
-
-		for i in len(x):
-			med2[i] = math.sqrt((x[i] - med) * (x[i] - med))
-
-		return statistics.median(med2) / 0.6744888

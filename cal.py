@@ -2,10 +2,15 @@ import numpy as np
 import statistics
 import math
 
-def MADFM(x)
-	med = statistics.median(x)
+def madfm(x):
+	tmp = [float(s) for s in x]
 
-	for i in len(x)
-		med2[i] = math.sqrt((x[i] - med) * (x[i] - med))
+	med = float(statistics.median(tmp))
+	med2 = []
+
+	print(med)
+
+	for i in tmp:
+		med2.append(math.sqrt((i - med) * (i - med)))
 
 	return statistics.median(med2) / 0.6744888
