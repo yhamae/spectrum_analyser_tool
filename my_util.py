@@ -5,6 +5,6 @@ def my_index(l, x, default = ""):
     # x: 検索文字
     # default: 検索した値がなかったときの戻り値
     if x in l:
-        return args[l.index(x) + 1]
+        return l[l.index(x) + 1]
     else:
         return default
