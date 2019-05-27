@@ -2,6 +2,7 @@ import maser_search
 import NRODataReduction
 import my_util
 import sys
+import cal
 
 
 
@@ -46,9 +47,9 @@ freq = [float(s) for s in nrodata.freq]
 T = [float(s) for s in nrodata.T]
 
 if 'c' in mode:
-    print("------------------------------\n" + "StatusCode >     " + "data() = " + str(result01))
+    print("\n------------------------------\n" + "StatusCode >     " + "data() = " + str(result01))
 if 'p' in mode:
-    print("\n" + "--- " + "Number of vcalue" + " ---")
+    print("\n" + "----- Number of value -----")
     my_util.chklprint(channel, freq, T)
 
 
@@ -62,21 +63,23 @@ maser.width = int(width)
 maser.mode = mode
 result02 = maser.find()
 
-print("peak freq is bellow")
-print(maser.peak, sep = "\n")
+MADFM = cal.madfm(T)
 
-
+print("\n----- peak channels is bellow -----")
+print(">>>   channel       Value         SNR")
 for i in maser.peak:
-    print("replot [", end ="")
-    print(i, end =",")
-    print(T[i - 1], end = "")
-    print("]")
+    # print(">>>    ", end ="")
+    # print(channel[i], end =", ")
+    # print(T[i], end = ",  ")
+    # print(T[i] / MADFM)
+    tmp_snr = float(T[i] / MADFM)
+    # print(tmp_snr)
+    print('>>>     {0:>5}  {1:>10.9}   {2:>9.6}'.format(channel[i], T[i], tmp_snr))
 
 
 if 'c' in mode:
-    print("------------------------------")
-    print("status code >    " + "SpectrumSearcher(): ", end = "")
-    print(result01)
+    print("\n------------------------------\n" + "status code >    " + "SpectrumSearcher(): " + str(result01))
+    
 
 # print("------------------------------")
 # print("DebagMode   >    " + "", end = "")

@@ -1,6 +1,6 @@
 import numpy as np
 import cal
-
+import my_util
 
 
 class SpectrumSearcher:
@@ -15,27 +15,6 @@ class SpectrumSearcher:
 
 
     def find(self):
-        if 'p' in self.mode:
-            print("------------------------------")
-            print("Parameter   >    " + "len(self.x) = ", end = "")
-            print(len(self.x), end = "")
-            print("    ", end = "")
-            print(type(self.x), end = "")
-            print("    ", end = "")
-            print(type(self.x[0]))
-            print("Parameter   >    " + "len(self.y) = ", end = "")
-            print(len(self.y), end = "")
-            print("    ", end = "")
-            print(type(self.y), end = "")
-            print("    ", end = "")
-            print(type(self.y[0]))
-            print("Parameter   >    " + "len(self.peak) = ", end = "")
-            print(len(self.peak))
-            print("Parameter   >    " + "self.snr = ", end = "")
-            print(self.snr)
-            print("Parameter   >    " + "width = ", end = "")
-            print(self.width)
-
         try:
 	
             
@@ -55,9 +34,8 @@ class SpectrumSearcher:
                 y2.append(tmp)
             MADFM = cal.madfm(y2)
             if 'r' in self.mode:
-                print("------------------------------")
-                print("ResultValue >    " + "MADFM = ", end = "")
-                print(MADFM)
+                print("\n------------------------------")
+                my_util.chkprint(MADFM)
 
             # 輝線の山の部分を検索
             for j in range(1, len(y2) - 1):
@@ -65,9 +43,8 @@ class SpectrumSearcher:
                     tmp2.append(j)
 
             if 'r' in self.mode:
-                print("------------------------------")
-                print("ResultValue >    " + "len(tmp2) = ", end = "")
-                print(len(tmp2))
+                print("\n------------------------------")
+                my_util.chklprint(tmp2)
                 # print(tmp2)
 
             # yの値がしきい値以上のチャンネルを記録
