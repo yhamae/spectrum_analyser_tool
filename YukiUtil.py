@@ -15,6 +15,9 @@ def option_index(l, x, default = ""):
     # l: 検索対象のリスト
     # x: 検索文字
     # default: 検索した値がなかったときの戻り値
+    # 使い方: コマンドラインに"*** -fname test"という入力をすると以下のようにして"test"という値を得られる
+    # args = sys.argv
+    # filename = YukiUtil.option_index(args, '-fname')
     if x in l:
         return l[l.index(x) + 1]
     else:
