@@ -12,4 +12,8 @@ def my_index(l, x, default = ""):
 
 def chkprint(*args):
     names = {id(v):k for k,v in currentframe().f_back.f_locals.items()}
-    print(', '.join(names.get(id(arg),'???')+' = '+repr(arg) for arg in args))
+    print(">>>    "+'\n>>>    '.join(names.get(id(arg),'???')+' = '+repr(arg) for arg in args))
+
+def chklprint(*args):
+    names = {id(v):k for k,v in currentframe().f_back.f_locals.items()}
+    print(">>>    len("+'\n>>>    len('.join(names.get(id(arg),'???')+') = '+str(len(arg)) for arg in args))

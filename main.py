@@ -30,7 +30,7 @@ except IndexError as e:    # オプションの引数が存在しない場合
     print(e)
     exit()
 
-my_util.chkprint(mode)
+my_util.chklprint(mode, snr)
 
 
 nrodata = NRODataReduction.GetNRO_onoff()
