@@ -28,7 +28,7 @@ class GetNRO_onoff:
                     self.T.append(tmp[2])
 
                 del tmp
-                # del tmp
+
             if 's' in self.mode:
                 print("------------------------------")
                 for i in range(0, len(self.channel)):
