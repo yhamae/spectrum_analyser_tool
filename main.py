@@ -26,11 +26,9 @@ try:
 except IndexError as e:    # オプションの引数が存在しない場合
     print("illegal option")
     print("usage: Python main.py -fname filename [-m 動作モード] [-s SNR] [-w smoothing width]")
-    print("Err: ", end = "")
-    print(e)
     exit()
 
-my_util.chklprint(mode, snr)
+
 
 
 nrodata = NRODataReduction.GetNRO_onoff()
@@ -48,18 +46,10 @@ freq = [float(s) for s in nrodata.freq]
 T = [float(s) for s in nrodata.T]
 
 if 'c' in mode:
-    print("------------------------------")
-    print("StatusCode >    " + "data() = ", end = "")
-    print(result01)
+    print("------------------------------\n" + "StatusCode >     " + "data() = " + str(result01))
 if 'p' in mode:
-    print("------------------------------")
-    print("Parameter  >    " + "Number of vcalue")
-    print("Parameter  >    " + "channel: ", end = "")
-    print(len(channel))
-    print("Parameter  >    " + "frequency: ", end = "")
-    print(len(freq))
-    print("Parameter  >    " + "value: ", end = "")
-    print(len(T))
+    print("\n" + "--- " + "Number of vcalue" + " ---")
+    my_util.chklprint(channel, freq, T)
 
 
 
