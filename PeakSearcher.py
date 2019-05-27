@@ -23,7 +23,7 @@ try:
 
 except IndexError as e:    # オプションの引数が存在しない場合
     print("illegal option")
-    print("usage: Python main.py -fname filename -o 結果を書き出すファイルの名前　[-m 動作モード] [-s SNR] [-w smoothing width]")
+    print("usage: Python3 PeakSearcher.py -fname filename -o 結果を書き出すファイルの名前　[-m 動作モード] [-s SNR] [-w smoothing width]")
     exit()
 
 
