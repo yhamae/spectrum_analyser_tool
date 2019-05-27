@@ -89,7 +89,7 @@ exp_header \
 + "smoothing width  = " + str(width) + "\n" \
 + "SNR              = " + str(snr) + "\n" \
 + "Output File name = " + outfile + "\n" \
-+ "MADFM            = " + str(MADFM) + "\n" \
++ "rms (by MADFM)   = " + str(MADFM) + "\n" \
 + "imput command    = $ Python3 " + ' '.join(args) + "\n" \
 + "\n" \
 + "channel    freq    val    snr"    # ヘッダー情報
