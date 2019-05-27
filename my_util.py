@@ -1,4 +1,5 @@
 import sys
+from inspect import currentframe
 
 def my_index(l, x, default = ""):
     # l: 検索対象のリスト
@@ -8,3 +9,7 @@ def my_index(l, x, default = ""):
         return l[l.index(x) + 1]
     else:
         return default
+
+def chkprint(*args):
+    names = {id(v):k for k,v in currentframe().f_back.f_locals.items()}
+    print(', '.join(names.get(id(arg),'???')+' = '+repr(arg) for arg in args))

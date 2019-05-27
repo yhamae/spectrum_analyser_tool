@@ -30,6 +30,8 @@ except IndexError as e:    # オプションの引数が存在しない場合
     print(e)
     exit()
 
+my_util.chkprint(mode)
+
 
 nrodata = NRODataReduction.GetNRO_onoff()
 nrodata.channel = []
