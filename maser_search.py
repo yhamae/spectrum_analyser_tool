@@ -1,6 +1,5 @@
 import numpy as np
-import cal
-import my_util
+import YukiUtil
 
 
 class SpectrumSearcher:
@@ -32,10 +31,10 @@ class SpectrumSearcher:
                 for k in range(j, self.width + j):
                     tmp += self.y[k]
                 y2.append(tmp)
-            MADFM = cal.madfm(y2)
+            MADFM = YukiUtil.madfm(y2)
             if 'r' in self.mode:
-                print("\n------------------------------")
-                my_util.chkprint(MADFM)
+                print("------------------------------")
+                YukiUtil.chkprint(MADFM)
 
             # 輝線の山の部分を検索
             for j in range(1, len(y2) - 1):
@@ -43,8 +42,8 @@ class SpectrumSearcher:
                     tmp2.append(j)
 
             if 'r' in self.mode:
-                print("\n------------------------------")
-                my_util.chklprint(tmp2)
+                print("------------------------------")
+                YukiUtil.chklprint(tmp2)
                 # print(tmp2)
 
             # yの値がしきい値以上のチャンネルを記録
@@ -53,7 +52,10 @@ class SpectrumSearcher:
                     tmp3.append(channel_no)
             # 輝線が見つからなかった場合通知
             if not tmp3:
-                print("##### Can not find peak channel!#####")
+                print("#########################")
+                print("Can not find peak channel")
+                print("#########################")
+
 
             # 輝線がある範囲の中で、最大値を記録
             for j in tmp3:
@@ -63,22 +65,30 @@ class SpectrumSearcher:
 
                 peak_val = max(tmp4)
                 l = tmp4.index(peak_val)
-                self.peak.append(self.x[l + j * self.width])
+                self.peak.append(self.x[l + j * self.width - 1])
                 del tmp4
 
 
 
             del x2, y2
 
+
+
         except OverflowError as e:
             # 計算中にオーバーフローが発生した場合
             print(e)
+            return False
         except RecursionError as e:
             # 再帰処理の回数多過ぎ
             print(e)
+            return False
         except ZeroDivisionError as e:
             # 0で割っている
             print(e)
+            return False
         except IndexError as e:
         	print(e)
+        	return False
+        else:
+        	return True
 
