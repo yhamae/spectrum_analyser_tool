@@ -4,7 +4,7 @@ smoothing width  = 6
 SNR              = 10
 Output File name = out.txt
 MADFM            = 0.11053556411907804
-imput command    = $ Python3 SearchPeak.py -fname i18286_H2O_181223.txt -o out.txt -s 10 -w 6
+imput command    = $ Python3 PeakSearcher.py -fname i18286_H2O_181223.txt -o out.txt -s 10 -w 6
 
 channel    freq    val    snr
 453    276.0230460712181    0.07441    0.6731770050030179    
