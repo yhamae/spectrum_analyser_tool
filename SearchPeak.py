@@ -83,7 +83,15 @@ for i in maser.peak:
 print(">>>\n>>>    Number of peak: " + str(len(maser.peak)))
 
 # 書き出し
-exp_header = "rawfile name = " + filename + "\n" + "Number of peak = " + str(len(maser.peak)) + "\n\n" + "channel    freq    val    snr"    # ヘッダー情報
+exp_header \
+= "Rawfile name     = " + filename + "\n" \
++ "Number of peak   = " + str(len(maser.peak)) + "\n" \
++ "smoothing width  = " + str(width) + "\n" \
++ "SNR              = " + str(snr) + "\n" \
++ "Output File name = " + outfile + "\n" \
++ "MADFM            = " + str(MADFM) + "\n" \
++ "imput command    = $ Python3 " + ' '.join(args) + "\n" \
++ "\nchannel    freq    val    snr"    # ヘッダー情報
 YukiUtil.export_data(outfile, exp_header, peak_channel, peak_freq, peak_T, peak_snr)
 
 
