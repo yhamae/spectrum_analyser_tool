@@ -12,9 +12,6 @@ import sys
 # s: 読み込んだデータの表示    
 # r: 計算結果の表示
 
-
-# filename = "i18286_H2O_181223.txt"
-
 try:
     # オプションから引数を取得
     args = sys.argv
