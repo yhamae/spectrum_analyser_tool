@@ -74,6 +74,13 @@ print("peak freq is bellow")
 print(maser.peak, sep = "\n")
 
 
+for i in maser.peak:
+    print("replot [", end ="")
+    print(i, end =",")
+    print(T[i - 1], end = "")
+    print("]")
+
+
 if 'c' in mode:
     print("------------------------------")
     print("status code >    " + "SpectrumSearcher(): ", end = "")

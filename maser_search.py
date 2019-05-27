@@ -38,16 +38,13 @@ class SpectrumSearcher:
 
         try:
 	
-            MADFM = cal.madfm(self.y)
+            
             x2 = []
             y2 = []
             tmp2 = []
             tmp3 = []
 
-            if 'r' in self.mode:
-                print("------------------------------")
-                print("ResultValue >    " + "MADFM = ", end = "")
-                print(MADFM)
+            
 
             # チャンネルを積分
             for j in range(0, len(self.x) - self.width - 1, self.width + 1):
@@ -56,6 +53,11 @@ class SpectrumSearcher:
                 for k in range(j, self.width + j):
                     tmp += self.y[k]
                 y2.append(tmp)
+            MADFM = cal.madfm(y2)
+            if 'r' in self.mode:
+                print("------------------------------")
+                print("ResultValue >    " + "MADFM = ", end = "")
+                print(MADFM)
 
             # 輝線の山の部分を検索
             for j in range(1, len(y2) - 1):
@@ -70,7 +72,7 @@ class SpectrumSearcher:
 
             # yの値がしきい値以上のチャンネルを記録
             for channel_no in tmp2:
-                if self.y[channel_no] >= self.snr * MADFM:
+                if y2[channel_no] >= self.snr * MADFM :
                     tmp3.append(channel_no)
             # 輝線が見つからなかった場合通知
             if not tmp3:
