@@ -19,7 +19,7 @@ try:
     filename = YukiUtil.option_index(args, '-fname')
     snr = YukiUtil.option_index(args, '-s', 3)
     width = YukiUtil.option_index(args, '-w', 4)
-    outfile = YukiUtil.option_index(args, '-o', 4)
+    outfile = YukiUtil.option_index(args, '-o', "out.txt")
 
 except IndexError as e:    # オプションの引数が存在しない場合
     print("illegal option")

@@ -25,13 +25,17 @@ class SpectrumSearcher:
             
 
             # チャンネルを積分
-            for j in range(0, len(self.x) - self.width - 1, self.width + 1):
+            for j in range(0, len(self.x) - self.width, self.width + 1):
                 tmp = 0
                 x2.append(j)
                 for k in range(j, self.width + j):
                     tmp += self.y[k]
                 y2.append(tmp)
+
+            YukiUtil.export_data("smootiong_data.txt", "channel    val", x2, y2)
+
             MADFM = YukiUtil.madfm(y2)
+
             if 'r' in self.mode:
                 print("------------------------------")
                 YukiUtil.chkprint(MADFM)
@@ -48,7 +52,7 @@ class SpectrumSearcher:
 
             # yの値がしきい値以上のチャンネルを記録
             for channel_no in tmp2:
-                if y2[channel_no] >= self.snr * MADFM :
+                if y2[channel_no] > self.snr * MADFM :
                     tmp3.append(channel_no)
             # 輝線が見つからなかった場合通知
             if not tmp3:
@@ -58,6 +62,13 @@ class SpectrumSearcher:
 
 
             # 輝線がある範囲の中で、最大値を記録
+                 ###
+                 # #
+                 # #
+               ### ###
+                #   #
+                 # #
+                  #
             for j in tmp3:
                 tmp4 = []
                 for k in range(j * self.width, j * self.width + self.width):
