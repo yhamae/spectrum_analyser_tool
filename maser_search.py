@@ -25,7 +25,7 @@ class SpectrumSearcher:
             
 
             # チャンネルを積分
-            for j in range(0, len(self.x) - self.width, self.width + 1):
+            for j in range(0, len(self.x) - self.width, self.width):
                 tmp = 0
                 x2.append(j)
                 for k in range(j, self.width + j):
@@ -41,8 +41,9 @@ class SpectrumSearcher:
                 YukiUtil.chkprint(MADFM)
 
             # 輝線の山の部分を検索
-            for j in range(1, len(y2) - 1):
-                if y2[j] - y2[j - 1] > 0 and y2[j + 1] - y2[j] < 0:
+            # for j in range(1, len(y2) - 1):
+            for j in x2:
+                if y2[j] - y2[j - self.width] > 0 and y2[j + self.width] - y2[j] < 0 and j != 0 and j != len(self.x) - self.width:
                     tmp2.append(j)
 
             if 'r' in self.mode:
@@ -55,7 +56,7 @@ class SpectrumSearcher:
                 if y2[channel_no] > self.snr * MADFM :
                     tmp3.append(channel_no)
             # 輝線が見つからなかった場合通知
-            if not tmp3:
+            if len(tmp3) == 0:
                 print("#########################")
                 print("Can not find peak channel")
                 print("#########################")
@@ -69,17 +70,20 @@ class SpectrumSearcher:
                 #   #
                  # #
                   #
+            range_list = []
             for j in tmp3:
                 tmp4 = []
-                for k in range(j * self.width, j * self.width + self.width):
+                for k in range(j * self.width, j * self.width + self.width + 1):
                     tmp4.append(self.y[k])
+                    # range_list.append(k)
 
                 peak_val = max(tmp4)
+                range_list.append(peak_val)
                 l = tmp4.index(peak_val)
                 self.peak.append(self.x[l + j * self.width - 1])
                 del tmp4
 
-
+            YukiUtil.export_data("range.txt", " ", range_list)
 
             del x2, y2
 
