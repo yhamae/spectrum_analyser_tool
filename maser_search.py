@@ -1,5 +1,6 @@
 import numpy as np
 import YukiUtil
+import traceback
 
 
 class SpectrumSearcher:
@@ -27,7 +28,7 @@ class SpectrumSearcher:
             # チャンネルを積分
             for j in range(0, len(self.x) - self.width, self.width):
                 tmp = 0
-                x2.append(j)
+                x2.append(self.x[j])
                 for k in range(j, self.width + j):
                     tmp += self.y[k]
                 y2.append(tmp)
@@ -42,8 +43,11 @@ class SpectrumSearcher:
 
             # 輝線の山の部分を検索
             # for j in range(1, len(y2) - 1):
-            for j in x2:
-                if y2[j] - y2[j - self.width] > 0 and y2[j + self.width] - y2[j] < 0 and j != 0 and j != len(self.x) - self.width:
+            for j in range(1,len(y2) - 1):
+                # if j == 0 or j == len(self.x) - self.width: 
+                #     print(j)
+                #     continue
+                if y2[j] - y2[j - 1] > 0 and y2[j + 1] - y2[j] < 0:
                     tmp2.append(j)
 
             if 'r' in self.mode:
@@ -83,7 +87,7 @@ class SpectrumSearcher:
                 peak_val = max(tmp4)
                 range_list.append(peak_val)
                 l = tmp4.index(peak_val)
-                self.peak.append(self.x[l + j * self.width - 1])
+                self.peak.append(self.x[l + j * self.width])
                 del tmp4
 
             YukiUtil.export_data("range.txt", " ", range_list)
@@ -94,19 +98,18 @@ class SpectrumSearcher:
 
         except OverflowError as e:
             # 計算中にオーバーフローが発生した場合
+            print("####################")
             # print(e)
-            return e
-        except RecursionError as e:
-            # 再帰処理の回数多過ぎ
-            # print(e)
+            traceback.print_exc()
+            print("####################")
             return e
         except ZeroDivisionError as e:
             # 0で割っている
+            print("####################")
             # print(e)
+            traceback.print_exc()
+            print("####################")
             return e
-        # except IndexError as e:
-        # 	# print(e)
-        # 	return e
         else:
         	return True
 
