@@ -51,12 +51,15 @@ class SpectrumSearcher:
                 YukiUtil.chklprint(tmp2)
                 # print(tmp2)
 
+            count = 0
             # yの値がしきい値以上のチャンネルを記録
             for channel_no in tmp2:
                 if y2[channel_no] > self.snr * MADFM :
                     tmp3.append(channel_no)
+                    count += 1
+
             # 輝線が見つからなかった場合通知
-            if len(tmp3) == 0:
+            if count == 0:
                 print("#########################")
                 print("Can not find peak channel")
                 print("#########################")
@@ -91,19 +94,19 @@ class SpectrumSearcher:
 
         except OverflowError as e:
             # 計算中にオーバーフローが発生した場合
-            print(e)
-            return False
+            # print(e)
+            return e
         except RecursionError as e:
             # 再帰処理の回数多過ぎ
-            print(e)
-            return False
+            # print(e)
+            return e
         except ZeroDivisionError as e:
             # 0で割っている
-            print(e)
-            return False
-        except IndexError as e:
-        	print(e)
-        	return False
+            # print(e)
+            return e
+        # except IndexError as e:
+        # 	# print(e)
+        # 	return e
         else:
         	return True
 

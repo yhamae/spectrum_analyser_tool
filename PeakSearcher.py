@@ -99,7 +99,7 @@ YukiUtil.export_data(outfile, exp_header, peak_channel, peak_freq, peak_T, peak_
 if 'c' in mode:
     print("------------------------------\n" + "status code >    " + "SpectrumSearcher(): " + str(result[1]))
 
-if all(result):
+if result[0] == True and result[1] == True:
     print("\n\n------------------------------")
     print("Program has correctly finished")
     print("------------------------------")
