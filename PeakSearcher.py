@@ -57,7 +57,7 @@ if not directory == "":
     filelist = os.listdir(directory)
     for i in range(0, len(filelist)):
         filelist[i] = directory + filelist[i]
-        outflist.append(os.path.splitext(filelist[i])[0] + '_out.txt')
+        outflist.append("PeakList_" + os.path.splitext(filelist[i])[0] + '.txt')
 print(filelist)
 print(outflist)
 
