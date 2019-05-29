@@ -51,15 +51,19 @@ except ValueError as e:
     print(usage)
     exit()
 
-outflist = []
+
 
 if not directory == "":
+    outflist = []
     filelist = os.listdir(directory)
     for i in range(0, len(filelist)):
         filelist[i] = directory + filelist[i]
         outflist.append("PeakList_" + os.path.splitext(filelist[i])[0] + '.txt')
 print(filelist)
 print(outflist)
+
+else:
+    
 
 for filename, outfile in zip(filelist, outflist):
 
