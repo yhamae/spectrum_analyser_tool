@@ -5,9 +5,9 @@ import numpy as np
 import statistics
 import math
 
-####################
-# ユーティリティ
-####################
+################
+# ユーティリティ #
+################
 
 # 文字列検索（主にコマンドラインから引数を受け取る用）
 def option_index(l, x, default = ""):
@@ -19,7 +19,10 @@ def option_index(l, x, default = ""):
     # args = sys.argv
     # filename = YukiUtil.option_index(args, '-fname')
     if x in l:
-        return l[l.index(x) + 1]
+        if not '-' in l[l.index(x) + 1]:
+            return l[l.index(x) + 1]
+        else:
+            raise IndexError
     else:
         return default
 
@@ -47,9 +50,9 @@ def export_data(*args):
             print(args[j][i], file=f, end = "    ")
         print(file=f)
 
-####################
-# 計算
-####################
+#######
+# 計算 #
+#######
 
 # MADFM
 def madfm(x):

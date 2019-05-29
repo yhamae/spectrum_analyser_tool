@@ -1,5 +1,6 @@
 import numpy as np
 import YukiUtil
+import traceback
 
 class GetNRO_onoff:
     def __init__(self):
@@ -36,8 +37,12 @@ class GetNRO_onoff:
                         
 
         except AttributeError as e:
-            print(e)
+            # print(e)
+            print("####################")
             print("filename = " + self.filename)
+            # print(e)
+            traceback.print_exc()
+            print("####################")
             return False
 
         except EOFError as e:
@@ -47,6 +52,7 @@ class GetNRO_onoff:
             print(">>>    len(freq) = " + len(self.freq))
             print(">>>    len(T) = " + len(self.T))
             print(">>>    filename = " + self.filename)
+            traceback.print_exc()
             return False
         else:
             return True
