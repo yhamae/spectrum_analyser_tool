@@ -1,0 +1,9 @@
+Rawfile name     = i18286_H2O_181223.txt
+Number of peak   = 10
+smoothing width  = 6
+SNR              = 10.0
+Output File name = peak/
+rms (by MADFM)   = 0.04937072342787604
+imput command    = $ Python3 PeakSearcher.py -fname i18286_H2O_181223.txt -o peak/ -s 10 -w 6 -m c -a spectrum/
+
+channel    freq    val    snr

@@ -57,15 +57,18 @@ if not directory == "":
     outflist = []
     filelist = os.listdir(directory)
     for i in range(0, len(filelist)):
+        outflist.append(outfile + os.path.splitext(filelist[i])[0] + '.txt')
         filelist[i] = directory + filelist[i]
-        outflist.append("PeakList_" + os.path.splitext(filelist[i])[0] + '.txt')
-print(filelist)
-print(outflist)
+# print(filelist)
+# print(outflist)
 
-else:
-    
+else :
+    filelist = []
+    outflist = []
+    filelist.append(filename)
+    outflist.append(outfile)
 
-for filename, outfile in zip(filelist, outflist):
+for imp, out in zip(filelist, outflist):
 
 
 
@@ -80,7 +83,7 @@ for filename, outfile in zip(filelist, outflist):
     nrodata.channel = []
     nrodata.freq = []
     nrodata.T = []
-    nrodata.filename = filename
+    nrodata.filename = imp
     nrodata.mode = mode
 
     result.append(nrodata.get())
@@ -118,16 +121,24 @@ for filename, outfile in zip(filelist, outflist):
 
     MADFM = YukiUtil.madfm(T)
 
-    print("----- peak channels is bellow -----")
-    print(">>>   channel       Value         SNR")
-    for i in maser.peak:
-        tmp_snr = float(T[i] / MADFM)
-        print('>>>     {0:>5}  {1:>10.9}   {2:>9.6}'.format(channel[i], T[i], tmp_snr))
-        peak_channel.append(channel[i])
-        peak_freq.append(freq[i])
-        peak_T.append(T[i])
-        peak_snr.append(tmp_snr)
-    print(">>>\n>>>    Number of peak: " + str(len(maser.peak)))
+    if directory == "":
+        if len(maser.peak) != 0:
+            print("----- peak channels is bellow -----")
+            print(">>>   channel       Value         SNR")
+            for i in maser.peak:
+                tmp_snr = float(T[i] / MADFM)
+                print('>>>     {0:>5}  {1:>10.9}   {2:>9.6}'.format(channel[i], T[i], tmp_snr))
+                peak_channel.append(channel[i])
+                peak_freq.append(freq[i])
+                peak_T.append(T[i])
+                peak_snr.append(tmp_snr)
+            print(">>>\n>>>    Number of peak: " + str(len(maser.peak)))
+        else:
+            print("#########################")
+            print("Can not find peak channel")
+            print("#########################")
+    else:
+        print(">>>    " + "find " + str(len(maser.peak)) + " peaks in " + imp)
 
     # 書き出し
     exp_header  = "Rawfile name     = " + filename + "\n"
@@ -139,15 +150,15 @@ for filename, outfile in zip(filelist, outflist):
     exp_header += "imput command    = $ Python3 " + ' '.join(args) + "\n" 
     exp_header += "\n" 
     exp_header += "channel    freq    val    snr"    # ヘッダー情報
-    YukiUtil.export_data(outfile, exp_header, peak_channel, peak_freq, peak_T, peak_snr)
+    YukiUtil.export_data(out, exp_header, peak_channel, peak_freq, peak_T, peak_snr)
 
 
     if 'c' in mode:
         print("------------------------------\n" + "status code >    " + "SpectrumSearcher(): " + str(result[1]))
 
-    if result[0] == True and result[1] == True:
-        print("\n\n------------------------------")
-        print("Program has correctly finished")
-        print("------------------------------")
+if result[0] == True and result[1] == True:
+    print("\n\n------------------------------")
+    print("Program has correctly finished")
+    print("------------------------------")
 
 

@@ -68,10 +68,10 @@ class SpectrumSearcher:
                         count += 1
 
                 # 輝線が見つからなかった場合通知
-                if count == 0:
-                    print("#########################")
-                    print("Can not find peak channel")
-                    print("#########################")
+                # if count == 0:
+                #     print("#########################")
+                #     print("Can not find peak channel")
+                #     print("#########################")
 
 
                 # 輝線がある範囲の中で、最大値を記録
@@ -96,7 +96,7 @@ class SpectrumSearcher:
                 del x2, y2
 
                 if self.iteration <=1 or i == self.iteration:
-                    print(">>>    iteration: " + str(i))
+                    # print(">>>    iteration: " + str(i))
                     break
                 i += 1
 
