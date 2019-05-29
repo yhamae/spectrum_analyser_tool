@@ -31,11 +31,12 @@ try:
     outfile = YukiUtil.option_index(args, '-o', default_outfile)
     iteration = int(YukiUtil.option_index(args, '-i', default_iteration))
     width2 = int(YukiUtil.option_index(args, '-ws', default_width2))
-    if '-d' in args: mode += "d"    # -d: デバッグモード
+    if '-d'  in args: mode += "d"   # -d: デバッグモード
     if '-sc' in args: mode += "c"   # -sc: ステータスコードの表示
-    if '-p' in args: mode += "p"    # -p: パラメーター表示
+    if '-p'  in args: mode += "p"   # -p: パラメーター表示
     if '-da' in args: mode += "s"   # -da: 読み込んだデータの表示  
-    if '-r' in args: mode += "r"    # -r: 計算結果の表示
+    if '-r'  in args: mode += "r"   # -r: 計算結果の表示
+    if '-a'  in args: mode += "a"   # -r: 計算結果の表示
 except IndexError as e:    # オプションの引数が存在しない場合
     print(usage)
     exit()
