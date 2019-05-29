@@ -1,5 +1,5 @@
 filename = "i18286_H2O_181223.txt"
-peak_filename = "out.txt"
+peak_filename = "i18286_H2O_181223.eps"
 plot_start = 0
 PeakFileHeader = 0
 
