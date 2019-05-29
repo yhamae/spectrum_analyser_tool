@@ -7,8 +7,8 @@ import sys
 #########
 # 初期値 #
 #########
-err_message  = "illegal option!\n"
-err_message += "usage: Python3 PeakSearcher.py -fname filename -o 結果を書き出すファイルの名前　[-m 動作モード] [-s SNR] [-w smoothing width] [-i iteration]"
+err_message  = "illegal option!"
+usage = "usage: Python3 PeakSearcher.py -fname filename -o 結果を書き出すファイルの名前　[-m 動作モード] [-s SNR] [-w smoothing width] [-i iteration]"
 default_mode = ""
 default_filename = ""
 default_snr = 3
@@ -37,10 +37,15 @@ try:
     if '-da' in args: mode += "s"   # -da: 読み込んだデータの表示  
     if '-r'  in args: mode += "r"   # -r: 計算結果の表示
     if '-a'  in args: mode += "a"   # -r: 計算結果の表示
+    if '-h'  in args:
+        print(usage)
+        exit()
 except IndexError as e:    # オプションの引数が存在しない場合
+    print(err_message)
     print(usage)
     exit()
 except ValueError as e:
+    print(err_message)
     print(usage)
     exit()
 
