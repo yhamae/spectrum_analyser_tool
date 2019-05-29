@@ -1,5 +1,6 @@
 filename = "i18286_H2O_181223.txt"
-peak_filename = "i18286_H2O_181223.eps"
+peak_filename = "out.txt"
+outname = "i18286_H2O_181223.eps"
 plot_start = 0
 PeakFileHeader = 0
 
@@ -13,8 +14,8 @@ set terminal postscript color eps
 plot filename every ::plot_start using 1:3 with lines title "spectrum"
 replot peak_filename every ::PeakFileHeader using 1:3 title "peak" pt 6 ps 3
 replot 'smoothiong_data.txt' every ::2 with lines title "smoothiong"
-set output 'test.eps'
-replot
+# set output outname
+# replot
 set terminal x11
 replot
 

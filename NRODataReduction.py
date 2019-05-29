@@ -36,24 +36,11 @@ class GetNRO_onoff:
                     print("Data > " + self.channel[i] + "    " + self.freq[i] +  "    " + self.T[i])
                         
 
-        except AttributeError as e:
+        except FileNotFoundError as e:
             # print(e)
-            print("####################")
-            print("filename = " + self.filename)
+            print(self.filename + ": No such file or directory")
             # print(e)
-            traceback.print_exc()
-            print("####################")
-            return False
-
-        except EOFError as e:
-            print(e)
-            print("parameter is bellow!")
-            print(">>>    channel = " + self.channel)
-            print(">>>    len(freq) = " + len(self.freq))
-            print(">>>    len(T) = " + len(self.T))
-            print(">>>    filename = " + self.filename)
-            traceback.print_exc()
-            return False
+            exit()
         else:
             return True
 
