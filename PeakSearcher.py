@@ -2,6 +2,7 @@ import maser_search
 import NRODataReduction
 import YukiUtil
 import sys
+import os
 
 
 #########
@@ -31,12 +32,13 @@ try:
     outfile = YukiUtil.option_index(args, '-o', default_outfile)
     iteration = int(YukiUtil.option_index(args, '-i', default_iteration))
     width2 = int(YukiUtil.option_index(args, '-ws', default_width2))
+    directory = YukiUtil.option_index(args, '-a') # -a: 指定したディレクトリ内のすべてのファイルに対して実行
     if '-d'  in args: mode += "d"   # -d: デバッグモード
     if '-sc' in args: mode += "c"   # -sc: ステータスコードの表示
     if '-p'  in args: mode += "p"   # -p: パラメーター表示
     if '-da' in args: mode += "s"   # -da: 読み込んだデータの表示  
     if '-r'  in args: mode += "r"   # -r: 計算結果の表示
-    if '-a'  in args: mode += "a"   # -r: 計算結果の表示
+    if '-b'  in args: mode += "b"   # -b: smoothing dataの書きだし
     if '-h'  in args:
         print(usage)
         exit()
@@ -49,83 +51,99 @@ except ValueError as e:
     print(usage)
     exit()
 
+outflist = []
 
-result = []
-peak_channel = []
-peak_freq = []
-peak_T = []
-peak_snr = []
+if not directory == "":
+    filelist = os.listdir(directory)
+    for i in range(0, len(filelist)):
+        filelist[i] = directory + filelist[i]
+        outflist.append(os.path.splitext(filelist[i])[0] + '_out.txt')
+print(filelist)
+print(outflist)
 
-
-nrodata = NRODataReduction.GetNRO_onoff()
-nrodata.channel = []
-nrodata.freq = []
-nrodata.T = []
-nrodata.filename = filename
-nrodata.mode = mode
-
-result.append(nrodata.get())
+for filename, outfile in zip(filelist, outflist):
 
 
 
-# str型をfloat型に変換
-channel = [int(s) for s in nrodata.channel]
-freq = [float(s) for s in nrodata.freq]
-T = [float(s) for s in nrodata.T]
+    result = []
+    peak_channel = []
+    peak_freq = []
+    peak_T = []
+    peak_snr = []
+
+
+    nrodata = NRODataReduction.GetNRO_onoff()
+    nrodata.channel = []
+    nrodata.freq = []
+    nrodata.T = []
+    nrodata.filename = filename
+    nrodata.mode = mode
+
+    result.append(nrodata.get())
+
+    # if result[1] == FileNotFoundError:
 
 
 
-if 'c' in mode:
-    print("------------------------------\n" + "StatusCode >     " + "data() = " + str(result[0]))
-if 'p' in mode:
-    print("----- Number of value -----")
-    YukiUtil.chklprint(channel, freq, T)
+
+    # str型をfloat型に変換
+    channel = [int(s) for s in nrodata.channel]
+    freq = [float(s) for s in nrodata.freq]
+    T = [float(s) for s in nrodata.T]
 
 
 
-maser = maser_search.SpectrumSearcher()
-maser.x = channel
-maser.y = T
-maser.peak = []
-maser.snr = snr
-maser.width = width
-maser.mode = mode
-maser.iteration = iteration
-maser.width2 = width2
-result.append(maser.find())
-
-MADFM = YukiUtil.madfm(T)
-
-print("----- peak channels is bellow -----")
-print(">>>   channel       Value         SNR")
-for i in maser.peak:
-    tmp_snr = float(T[i] / MADFM)
-    print('>>>     {0:>5}  {1:>10.9}   {2:>9.6}'.format(channel[i], T[i], tmp_snr))
-    peak_channel.append(channel[i])
-    peak_freq.append(freq[i])
-    peak_T.append(T[i])
-    peak_snr.append(tmp_snr)
-print(">>>\n>>>    Number of peak: " + str(len(maser.peak)))
-
-# 書き出し
-exp_header  = "Rawfile name     = " + filename + "\n"
-exp_header += "Number of peak   = " + str(len(maser.peak)) + "\n" 
-exp_header += "smoothing width  = " + str(width) + "\n" 
-exp_header += "SNR              = " + str(snr) + "\n" 
-exp_header += "Output File name = " + outfile + "\n" 
-exp_header += "rms (by MADFM)   = " + str(MADFM) + "\n" 
-exp_header += "imput command    = $ Python3 " + ' '.join(args) + "\n" 
-exp_header += "\n" 
-exp_header += "channel    freq    val    snr"    # ヘッダー情報
-YukiUtil.export_data(outfile, exp_header, peak_channel, peak_freq, peak_T, peak_snr)
+    if 'c' in mode:
+        print("------------------------------\n" + "StatusCode >     " + "data() = " + str(result[0]))
+    if 'p' in mode:
+        print("----- Number of value -----")
+        YukiUtil.chklprint(channel, freq, T)
 
 
-if 'c' in mode:
-    print("------------------------------\n" + "status code >    " + "SpectrumSearcher(): " + str(result[1]))
 
-if result[0] == True and result[1] == True:
-    print("\n\n------------------------------")
-    print("Program has correctly finished")
-    print("------------------------------")
+    maser = maser_search.SpectrumSearcher()
+    maser.x = channel
+    maser.y = T
+    maser.peak = []
+    maser.snr = snr
+    maser.width = width
+    maser.mode = mode
+    maser.iteration = iteration
+    maser.width2 = width2
+    result.append(maser.find())
+
+    MADFM = YukiUtil.madfm(T)
+
+    print("----- peak channels is bellow -----")
+    print(">>>   channel       Value         SNR")
+    for i in maser.peak:
+        tmp_snr = float(T[i] / MADFM)
+        print('>>>     {0:>5}  {1:>10.9}   {2:>9.6}'.format(channel[i], T[i], tmp_snr))
+        peak_channel.append(channel[i])
+        peak_freq.append(freq[i])
+        peak_T.append(T[i])
+        peak_snr.append(tmp_snr)
+    print(">>>\n>>>    Number of peak: " + str(len(maser.peak)))
+
+    # 書き出し
+    exp_header  = "Rawfile name     = " + filename + "\n"
+    exp_header += "Number of peak   = " + str(len(maser.peak)) + "\n" 
+    exp_header += "smoothing width  = " + str(width) + "\n" 
+    exp_header += "SNR              = " + str(snr) + "\n" 
+    exp_header += "Output File name = " + outfile + "\n" 
+    exp_header += "rms (by MADFM)   = " + str(MADFM) + "\n" 
+    exp_header += "imput command    = $ Python3 " + ' '.join(args) + "\n" 
+    exp_header += "\n" 
+    exp_header += "channel    freq    val    snr"    # ヘッダー情報
+    YukiUtil.export_data(outfile, exp_header, peak_channel, peak_freq, peak_T, peak_snr)
+
+
+    if 'c' in mode:
+        print("------------------------------\n" + "status code >    " + "SpectrumSearcher(): " + str(result[1]))
+
+    if result[0] == True and result[1] == True:
+        print("\n\n------------------------------")
+        print("Program has correctly finished")
+        print("------------------------------")
 
 

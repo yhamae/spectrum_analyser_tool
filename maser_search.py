@@ -33,7 +33,7 @@ class SpectrumSearcher:
                             tmp += self.y[k]
                         y2.append(tmp)
                     # ↓後で消す
-                    if 'a' in self.mode:
+                    if 'b' in self.mode:
                         YukiUtil.export_data("smoothiong_data.txt", "channel    val", x2, y2)
                     # ↑後で消す
                 else:
