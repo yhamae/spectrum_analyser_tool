@@ -4,6 +4,7 @@ import codecs
 import numpy as np
 import statistics
 import math
+import traceback
 
 ################
 # ユーティリティ #
@@ -56,12 +57,18 @@ def export_data(*args):
 
 # MADFM
 def madfm(x):
-    tmp = [float(s) for s in x]
+    try:
+        tmp = [float(s) for s in x]
 
-    med = float(statistics.median(tmp))
-    med2 = []
+        med = float(statistics.median(tmp))
+        med2 = []
 
-    for i in tmp:
-        med2.append(math.sqrt((i - med) * (i - med)))
+        for i in tmp:
+            med2.append(math.sqrt((i - med) * (i - med)))
 
-    return statistics.median(med2) / 0.6744888
+        return statistics.median(med2) / 0.6744888
+    except statistics.StatisticsError as e:
+            print("\n>>> " + str(e))
+            traceback.print_exc()
+            print("\n")
+            return False

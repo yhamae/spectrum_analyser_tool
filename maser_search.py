@@ -1,6 +1,7 @@
 import numpy as np
 import YukiUtil
 import traceback
+import statistics
 
 
 class SpectrumSearcher:
@@ -89,7 +90,6 @@ class SpectrumSearcher:
                         self.peak.append(self.x[l + j * self.width - self.width2 - 1])
                     del tmp4
 
-                YukiUtil.export_data("range.txt", " ", range_list)
 
                 self.width -= 1
 
@@ -100,21 +100,31 @@ class SpectrumSearcher:
                     break
                 i += 1
 
+            
+
 
         except OverflowError as e:
-            # 計算中にオーバーフローが発生した場合
-            print("####################")
-            # print(e)
+            print("\n>>> " + str(e))
             traceback.print_exc()
-            print("####################")
-            return e
+            print("\n")
+            return False
         except ZeroDivisionError as e:
-            # 0で割っている
-            print("####################")
-            # print(e)
+            print("\n>>> " + str(e))
             traceback.print_exc()
-            print("####################")
-            return e
+            print("\n")
+            return False
+        except statistics.StatisticsError as e:
+            print("\n>>> " + str(e))
+            traceback.print_exc()
+            print("\n")
+            return False
+        # except NameError as e:
+        #     print("\n\n>>> " + str(e))
+        #     traceback.print_exc()
+        #     print("\n\n")
+        #     return e
         else:
-        	return True
+            return True
+
+        	
 

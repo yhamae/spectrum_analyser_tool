@@ -1,0 +1,10 @@
+TASK=ATSUM
+DATE=Sat Feb 02 06:52:33 JST 2019
+spname(c8,1)=i15193
+class(c6,2)=i14
+spname2(c8,3)=i15193
+class2(c6,4)=s14
+accuracy(float,5)=7
+mode(int,6)=0
+spwindow(c,0)=1-      21
+Dir=/FLASHING/uno/

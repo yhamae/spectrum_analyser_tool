@@ -1,0 +1,12 @@
+TASK=CHOUT
+DATE=Sat Feb 02 07:11:45 JST 2019
+spname(c8,1)=i15193
+class(c6,2)=b13
+outname(c48,3)=i15193_SiOv1_190202.txt
+mode(int,4)=1
+outdev(int,5)=0
+header(int,6)=1
+reffreq(int,7)=1
+mfreq(double,8)=22.23508
+spwindow(c,0)= 1
+Dir=/FLASHING/uno/

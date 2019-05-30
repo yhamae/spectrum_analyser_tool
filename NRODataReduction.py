@@ -1,6 +1,7 @@
 import numpy as np
 import YukiUtil
 import traceback
+import codecs
 
 class GetNRO_onoff:
     def __init__(self):
@@ -14,7 +15,7 @@ class GetNRO_onoff:
 
     def get(self):
         try:
-            with open(self.filename) as f:
+            with codecs.open(self.filename, 'r', 'utf-8', 'ignore') as f:
                 line = f.readlines()
 
             for data in line:
@@ -29,18 +30,24 @@ class GetNRO_onoff:
                     self.T.append(tmp[2])
 
                 del tmp
+                
 
             if 's' in self.mode:
                 print("------------------------------")
                 for i in range(0, len(self.channel)):
                     print("Data > " + self.channel[i] + "    " + self.freq[i] +  "    " + self.T[i])
                         
-
         except FileNotFoundError as e:
-            # print(e)
             print(self.filename + ": No such file or directory")
-            # print(e)
-            exit()
+            # print("\n\n>>> " + str(e))
+            # traceback.print_exc()
+            # print("\n\n")
+            return e
+        # except UnicodeDecodeError as e:
+        #     print("\n\n>>> " + str(e))
+        #     traceback.print_exc()
+        #     print("\n\n")
+        #     return e
         else:
             return True
 
