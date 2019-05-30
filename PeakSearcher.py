@@ -5,6 +5,7 @@ import sys
 import os
 import traceback
 import plot
+from tqdm import tqdm
 
 #########
 # 初期値 #
@@ -68,7 +69,8 @@ else :
 result = []
 ErrFilelist = []
 
-for imp, out in zip(filelist, outflist):
+# for imp, out in zip(filelist, outflist):
+for i in tqdm(range(0, len(filelist))):
     try:
 
         lresult = len(result)
@@ -83,7 +85,7 @@ for imp, out in zip(filelist, outflist):
         nrodata.channel = []
         nrodata.freq = []
         nrodata.T = []
-        nrodata.filename = directory + imp
+        nrodata.filename = directory + filelist[i]
         nrodata.mode = mode
 
         result.append(nrodata.get())
@@ -114,14 +116,20 @@ for imp, out in zip(filelist, outflist):
         maser.width2 = width2
         result.append(maser.find())
 
-        MADFM = YukiUtil.madfm(T)
+        try:
+            MADFM = YukiUtil.madfm(T)
+        except statistics.StatisticsError as e:
+            if 'c' in mode:
+                print("\n>>> " + str(e))
+                traceback.print_exc()
+                print("\n")
 
 
-        for i in maser.peak:
-            tmp_snr = float(T[i] / MADFM)
-            peak_channel.append(channel[i])
-            peak_freq.append(freq[i])
-            peak_T.append(T[i])
+        for j in maser.peak:
+            tmp_snr = float(T[j] / MADFM)
+            peak_channel.append(channel[j])
+            peak_freq.append(freq[j])
+            peak_T.append(T[j])
             peak_snr.append(tmp_snr)
         # 単一のファイルのみの解析の場合の標準出力
         if directory == "":
@@ -138,20 +146,20 @@ for imp, out in zip(filelist, outflist):
                 print("#########################")
 
         # 複数ファイルを解析するときの標準出力
-        else:
-            print(">>>    " + "find " + str(len(maser.peak)) + " peaks in " + imp)
+        elif 'c' in mode:
+            print(">>>    " + "find " + str(len(maser.peak)) + " peaks in " + filelist[i])
 
         # 書き出し
-        exp_header  = "Rawfile name     = " + imp + "\n"
+        exp_header  = "Rawfile name     = " + filelist[i] + "\n"
         exp_header += "Number of peak   = " + str(len(maser.peak)) + "\n" 
         exp_header += "smoothing width  = " + str(width) + "\n" 
         exp_header += "SNR              = " + str(snr) + "\n" 
         exp_header += "Output File name = " + outfile + "\n" 
         exp_header += "rms (by MADFM)   = " + str(MADFM) + "\n" 
-        exp_header += "imput command    = $ Python3 " + ' '.join(args) + "\n" 
+        exp_header += "filelist[i]ut command    = $ Python3 " + ' '.join(args) + "\n" 
         exp_header += "\n" 
         exp_header += "channel    freq    val    snr"    # ヘッダー情報
-        YukiUtil.export_data(out, exp_header, peak_channel, peak_freq, peak_T, peak_snr)
+        YukiUtil.export_data(outflist[i], exp_header, peak_channel, peak_freq, peak_T, peak_snr)
 
 
         if 'c' in mode:
@@ -162,7 +170,7 @@ for imp, out in zip(filelist, outflist):
 
             if not directory == "":
 
-                plotpeak.fname = plotname + os.path.splitext(imp)[0] + '.png'
+                plotpeak.fname = plotname + os.path.splitext(filelist[i])[0] + '.png'
                 
             else:
                 plotpeak.fname = plotname
@@ -177,26 +185,27 @@ for imp, out in zip(filelist, outflist):
 
 
     except ValueError as e:
-        print(">>>can not find peaks for Err\n>>> " + str(e))
-        traceback.print_exc()
+        if 'c' in mode:
+            print(">>>can not find peaks for Err\n>>> " + str(e))
+            traceback.print_exc()
         # エラーが起こったこととそのとき読み込んだファイルを記録
         if not len(result) == lresult + 3:
             for k in range(lresult, lresult + 3):
                 result.append(False)
-                ErrFilelist.append(imp)
+                ErrFilelist.append(filelist[i])
 
 
 for status in result:
     if not status:
-        print("\n\n--------------------------------")
+        print("--------------------------------")
         print("Program has incorrectly finished")
-        print(str(int(result.count(False) / 2)) + " Error found")
+        print(str(len(ErrFilelist)) + " Error found")
         print("--------------------------------\n")
-        print("Err files")
-        print('\n'.join(ErrFilelist))
+        print("<<< Err files is bellow >>>")
+        print(''.join(ErrFilelist))
         exit()
 
-print("\n\n------------------------------")
+print("------------------------------")
 print("Program has correctly finished")
 print("------------------------------")
 

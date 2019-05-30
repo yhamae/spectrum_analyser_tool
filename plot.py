@@ -16,7 +16,7 @@ class MyPlot:
         plt.figure(figsize=(16, 9), dpi=120)
         plt.plot(self.x1, self.y1, linewidth = 0.5)
         plt.scatter(self.x2, self.y2, facecolors='none', edgecolors='r', linewidth = 0.5, s=100.0)
-        plt.rcParams['font.family'] ='Helvetica-Light'
+        # plt.rcParams['font.family'] ='Helvetica-Light'
         plt.title(os.path.splitext(self.fname)[0])
         # plt.subplots_adjust(1,1)
         # plt.legend()

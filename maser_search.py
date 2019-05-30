@@ -104,19 +104,22 @@ class SpectrumSearcher:
 
 
         except OverflowError as e:
-            print("\n>>> " + str(e))
-            traceback.print_exc()
-            print("\n")
+            if 'c' in self.mode:
+                print("\n>>> " + str(e))
+                traceback.print_exc()
+                print("\n")
             return False
         except ZeroDivisionError as e:
-            print("\n>>> " + str(e))
-            traceback.print_exc()
-            print("\n")
+            if 'c' in self.mode:
+                print("\n>>> " + str(e))
+                traceback.print_exc()
+                print("\n")
             return False
         except statistics.StatisticsError as e:
-            print("\n>>> " + str(e))
-            traceback.print_exc()
-            print("\n")
+            if 'c' in self.mode:
+                print("\n>>> " + str(e))
+                traceback.print_exc()
+                print("\n")
             return False
         # except NameError as e:
         #     print("\n\n>>> " + str(e))

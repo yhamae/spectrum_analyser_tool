@@ -68,7 +68,4 @@ def madfm(x):
 
         return statistics.median(med2) / 0.6744888
     except statistics.StatisticsError as e:
-            print("\n>>> " + str(e))
-            traceback.print_exc()
-            print("\n")
-            return False
+        return False
