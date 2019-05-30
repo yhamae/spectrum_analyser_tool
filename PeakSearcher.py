@@ -200,9 +200,10 @@ for status in result:
         print("--------------------------------")
         print("Program has incorrectly finished")
         print(str(len(ErrFilelist)) + " Error found")
-        print("--------------------------------\n")
+        print("--------------------------------")
         print("<<< Err files is bellow >>>")
-        print(''.join(ErrFilelist))
+        print("- ", end = "")
+        print('\n- '.join(ErrFilelist))
         exit()
 
 print("------------------------------")
