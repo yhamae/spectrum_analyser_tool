@@ -4,6 +4,7 @@ import YukiUtil
 import sys
 import os
 import traceback
+import plot
 
 #########
 # 初期値 #
@@ -32,10 +33,11 @@ try:
     outfile = YukiUtil.option_index(args, '-o', default_outfile)
     iteration = int(YukiUtil.option_index(args, '-i', default_iteration))
     width2 = int(YukiUtil.option_index(args, '-ws', default_width2))
+    plotname = YukiUtil.option_index(args, '-p')
     directory = YukiUtil.option_index(args, '-a') # 指定したディレクトリ内のすべてのファイルに対して実行
     if '-d'  in args: mode += "d"   # -d: デバッグモード
     if '-sc' in args: mode += "c"   # -sc: ステータスコードの表示
-    if '-p'  in args: mode += "p"   # -p: パラメーター表示
+    if '-prm'  in args: mode += "p"   # -p: パラメーター表示
     if '-da' in args: mode += "s"   # -da: 読み込んだデータの表示  
     if '-r'  in args: mode += "r"   # -r: 計算結果の表示
     if '-b'  in args: mode += "b"   # -b: smoothing dataの書きだし
@@ -56,7 +58,6 @@ if not directory == "":
     filelist = os.listdir(directory)
     for i in range(0, len(filelist)):
         outflist.append(outfile + os.path.splitext(filelist[i])[0] + '.txt')
-        filelist[i] = directory + filelist[i]
 
 else :
     filelist = []
@@ -82,7 +83,7 @@ for imp, out in zip(filelist, outflist):
         nrodata.channel = []
         nrodata.freq = []
         nrodata.T = []
-        nrodata.filename = imp
+        nrodata.filename = directory + imp
         nrodata.mode = mode
 
         result.append(nrodata.get())
@@ -115,6 +116,13 @@ for imp, out in zip(filelist, outflist):
 
         MADFM = YukiUtil.madfm(T)
 
+
+        for i in maser.peak:
+            tmp_snr = float(T[i] / MADFM)
+            peak_channel.append(channel[i])
+            peak_freq.append(freq[i])
+            peak_T.append(T[i])
+            peak_snr.append(tmp_snr)
         # 単一のファイルのみの解析の場合の標準出力
         if directory == "":
             if len(maser.peak) != 0:
@@ -123,10 +131,6 @@ for imp, out in zip(filelist, outflist):
                 for i in maser.peak:
                     tmp_snr = float(T[i] / MADFM)
                     print('>>>     {0:>5}  {1:>10.9}   {2:>9.6}'.format(channel[i], T[i], tmp_snr))
-                    peak_channel.append(channel[i])
-                    peak_freq.append(freq[i])
-                    peak_T.append(T[i])
-                    peak_snr.append(tmp_snr)
                 print(">>>\n>>>    Number of peak: " + str(len(maser.peak)))
             else:
                 print("#########################")
@@ -138,7 +142,7 @@ for imp, out in zip(filelist, outflist):
             print(">>>    " + "find " + str(len(maser.peak)) + " peaks in " + imp)
 
         # 書き出し
-        exp_header  = "Rawfile name     = " + filename + "\n"
+        exp_header  = "Rawfile name     = " + imp + "\n"
         exp_header += "Number of peak   = " + str(len(maser.peak)) + "\n" 
         exp_header += "smoothing width  = " + str(width) + "\n" 
         exp_header += "SNR              = " + str(snr) + "\n" 
@@ -153,12 +157,31 @@ for imp, out in zip(filelist, outflist):
         if 'c' in mode:
             print("------------------------------\n" + "status code >    " + "SpectrumSearcher(): " + str(result[1]))
 
+        if not plotname == "":
+            plotpeak = plot.MyPlot()
+
+            if not directory == "":
+
+                plotpeak.fname = plotname + os.path.splitext(imp)[0] + '.png'
+                
+            else:
+                plotpeak.fname = plotname
+            # print(plotpeak.fname)
+            plotpeak.x1 = freq
+            plotpeak.y1 = T
+            plotpeak.x2 = peak_freq
+            plotpeak.y2 = peak_T
+            plotpeakrms = MADFM
+            result.append(plotpeak.ExpPlot())
+
+
+
     except ValueError as e:
         print(">>>can not find peaks for Err\n>>> " + str(e))
         traceback.print_exc()
         # エラーが起こったこととそのとき読み込んだファイルを記録
-        if not len(result) == lresult + 2:
-            for k in range(lresult, lresult + 2):
+        if not len(result) == lresult + 3:
+            for k in range(lresult, lresult + 3):
                 result.append(False)
                 ErrFilelist.append(imp)
 

@@ -1,9 +1,0 @@
-Rawfile name     = 
-Number of peak   = 3
-smoothing width  = 4
-SNR              = 20.0
-Output File name = peak/PeakList
-rms (by MADFM)   = 0.030089454413475807
-imput command    = $ Python3 PeakSearcher.py -o peak/PeakList -s 20 -w 4 -ws 7 -a spectrum/
-
-channel    freq    val    snr
