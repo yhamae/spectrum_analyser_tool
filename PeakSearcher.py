@@ -69,7 +69,7 @@ else :
 result = []
 ErrFilelist = []
 
-# for imp, out in zip(filelist, outflist):
+# for imp, out in tqdm(zip(filelist, outflist)):
 for i in tqdm(range(0, len(filelist))):
     try:
 
