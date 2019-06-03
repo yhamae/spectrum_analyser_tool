@@ -11,7 +11,14 @@ from tqdm import tqdm
 # 初期値 #
 #########
 err_message  = "illegal option!"
-usage = "usage: Python3 PeakSearcher.py -fname filename -o 結果を書き出すファイルの名前　[-m 動作モード] [-s SNR] [-w smoothing width] [-i iteration]"
+usage  = "Usage: Python PeakSearcher -fname filename -o outputfilename [option]\n"
+usage += "        -s SNR\n"
+usage += "        -W Smoothing width\n"
+usage += "        -o output perak list file(引数に-aがある場合は、書き出されるファイル名は個々で指定した名前の後に読み込んだファイル名がくる)\n"
+usage += "        -ws maser search width(>maser width)\n"
+usage += "        -p plot fiel name(引数に-aがある場合は、書き出されるファイル名は個々で指定した名前の後に読み込んだファイル名がくる)\n"
+usage += "        -a input directory(これを指定した場合、-fname filenameは必要ない)\n"
+usage += "        -h 使い方の表示\n"
 default_mode = ""
 default_filename = ""
 default_snr = 3
