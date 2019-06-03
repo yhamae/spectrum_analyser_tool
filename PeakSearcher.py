@@ -164,8 +164,7 @@ for i in tqdm(range(0, len(filelist))):
         exp_header += "Output File name = " + outfile + "\n" 
         exp_header += "rms (by MADFM)   = " + str(MADFM) + "\n" 
         exp_header += "filelist[i]ut command    = $ Python3 " + ' '.join(args) + "\n" 
-        exp_header += "\n" 
-        exp_header += "channel    freq    val    snr"    # ヘッダー情報
+        exp_header += "\nchannel    freq    val    snr"    # ヘッダー情報
         YukiUtil.export_data(outflist[i], exp_header, peak_channel, peak_freq, peak_T, peak_snr)
 
 
