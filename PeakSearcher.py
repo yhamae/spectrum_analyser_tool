@@ -5,7 +5,12 @@ import sys
 import os
 import traceback
 import plot
-from tqdm import tqdm
+try:
+    from tqdm import tqdm
+    imp_tqdm = True
+except ImportError as e:
+    print()
+    imp_tqdm = False
 
 #########
 # 初期値 #
@@ -77,7 +82,12 @@ result = []
 ErrFilelist = []
 
 # for imp, out in tqdm(zip(filelist, outflist)):
-for i in tqdm(range(0, len(filelist))):
+if imp_tqdm:
+    bar = tqdm(range(0, len(filelist)))
+else:
+    bar = range(0, len(filelist))
+
+for i in bar:
     try:
 
         lresult = len(result)
