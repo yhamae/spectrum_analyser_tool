@@ -10,7 +10,8 @@ try:
     imp_tqdm = True
 except ImportError as e:
     print("You Can't Use Progress Bar!")
-    print("If you want to use progress bar, please install \"tqdm'\"")
+    print("If you want to use progress bar, please install \"tqdm\"")
+    print("Example Install Command: pip install tqdm")
     imp_tqdm = False
 
 #########
