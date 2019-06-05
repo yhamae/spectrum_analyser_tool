@@ -1,10 +1,7 @@
-import maser_search
-import NRODataReduction
-import YukiUtil
 import sys
 import os
 import traceback
-import plot
+
 try:
     from tqdm import tqdm
     imp_tqdm = True
@@ -13,6 +10,28 @@ except ImportError as e:
     print("If you want to use progress bar, please install \"tqdm\"")
     print("Example Install Command: pip install tqdm")
     imp_tqdm = False
+    
+try:
+    import maser_search
+except ImportError as e:
+    print("\"maser_search\" is not found")
+    print("Please get \"maser_search\" at \"https://github.com/yhamae/spectrum_analyser_tool/blob/master/maser_search.py\"")
+try:
+    import NRODataReduction
+except ImportError as e:
+    print("\"NRODataReduction\" is not found")
+    print("Please get \"NRODataReduction\" at \"https://github.com/yhamae/spectrum_analyser_tool/blob/master/NRODataReduction.py\"")
+try:
+    import YukiUtil
+except ImportError as e:
+    print("\"YukiUtil\" is not found")
+    print("Please get \"YukiUtil\" at \"https://github.com/yhamae/spectrum_analyser_tool/blob/master/YukiUtil.py\"")
+try:
+    import plot
+except ImportError as e:
+    print("\"plot.py\" is not found")
+    print("Please get \"plot.py\" at \"https://github.com/yhamae/spectrum_analyser_tool/blob/master/NRODataReduction.py\"")
+
 
 #########
 # 初期値 #
