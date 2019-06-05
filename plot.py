@@ -3,7 +3,7 @@ import numpy as np
 import os
 try:
     import matplotlib.pyplot as plt
-except ImportError as e:
+except ModuleNotFoundError as e:
     print("Not Found \"matplotlib\" in your computer")
     print("Please Enter Command: pip install matplotlib")
     import matplotlib.pyplot as plt
