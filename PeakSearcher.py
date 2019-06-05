@@ -10,27 +10,31 @@ except ImportError as e:
     print("If you want to use progress bar, please install \"tqdm\"")
     print("Example Install Command: pip install tqdm")
     imp_tqdm = False
-    
+
 try:
     import maser_search
 except ImportError as e:
-    print("\"maser_search\" is not found")
-    print("Please get \"maser_search\" at \"https://github.com/yhamae/spectrum_analyser_tool/blob/master/maser_search.py\"")
+    print("\"maser_search.py\" is not found")
+    print("Please get \"maser_search.py\" at \"https://github.com/yhamae/spectrum_analyser_tool/blob/master/maser_search.py\"")
+    exit()
 try:
     import NRODataReduction
 except ImportError as e:
-    print("\"NRODataReduction\" is not found")
-    print("Please get \"NRODataReduction\" at \"https://github.com/yhamae/spectrum_analyser_tool/blob/master/NRODataReduction.py\"")
+    print("\"NRODataReduction.py\" is not found")
+    print("Please get \"NRODataReduction.py\" at \"https://github.com/yhamae/spectrum_analyser_tool/blob/master/NRODataReduction.py\"")
+    exit()
 try:
     import YukiUtil
 except ImportError as e:
-    print("\"YukiUtil\" is not found")
-    print("Please get \"YukiUtil\" at \"https://github.com/yhamae/spectrum_analyser_tool/blob/master/YukiUtil.py\"")
+    print("\"YukiUtil.py\" is not found")
+    print("Please get \"YukiUtil.py\" at \"https://github.com/yhamae/spectrum_analyser_tool/blob/master/YukiUtil.py\"")
+    exit()
 try:
     import plot
 except ImportError as e:
     print("\"plot.py\" is not found")
     print("Please get \"plot.py\" at \"https://github.com/yhamae/spectrum_analyser_tool/blob/master/NRODataReduction.py\"")
+    exit()
 
 
 #########
