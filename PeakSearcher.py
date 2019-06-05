@@ -9,7 +9,8 @@ try:
     from tqdm import tqdm
     imp_tqdm = True
 except ImportError as e:
-    print()
+    print("You Can't Use Progress Bar!")
+    print("If you want to use progress bar, please install \"tqdm'\"")
     imp_tqdm = False
 
 #########
