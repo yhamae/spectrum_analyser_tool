@@ -6,6 +6,7 @@ try:
 except ImportError as e:
     print("Not Found \"matplotlib\" in your computer")
     print("Please Enter Command: pip install matplotlib")
+    import matplotlib.pyplot as plt
 
 
 class MyPlot:
