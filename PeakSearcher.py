@@ -5,7 +5,7 @@ import traceback
 import subprocess
 
 def DLFile(url):
-    print("Download start")
+    print(">>>    Start download from " + url)
     inp = []
     inp.append("curl")
     inp.append("-O")
@@ -17,9 +17,9 @@ try:
     from tqdm import tqdm
     imp_tqdm = True
 except ImportError as e:
-    print("You Can't Use Progress Bar!")
-    print("If you want to use progress bar, please install \"tqdm\"")
-    print("Example Install Command: pip install tqdm")
+    print(">>>    You Can't Use Progress Bar!")
+    print(">>>    If you want to use progress bar, please install \"tqdm\"")
+    print(">>>    Example Install Command: pip install tqdm")
     imp_tqdm = False
 
 try:
