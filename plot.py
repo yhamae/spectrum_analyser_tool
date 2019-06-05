@@ -3,10 +3,10 @@ import numpy as np
 import os
 try:
     import matplotlib.pyplot as plt
-except ModuleNotFoundError as e:
+except ImportError as e:
     print("Not Found \"matplotlib\" in your computer")
-    print("Please Enter Command: pip install matplotlib")
-    import matplotlib.pyplot as plt
+    print("Please Enter Command: brew install matplotlib")
+    exit()
 
 
 class MyPlot:
