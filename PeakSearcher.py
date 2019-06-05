@@ -29,12 +29,6 @@ except ImportError as e:
     DLFile("https://raw.githubusercontent.com/yhamae/spectrum_analyser_tool/master/YukiUtil.py")
     import YukiUtil
 try:
-    import plot
-except ImportError as e:
-    print("\"plot.py\" is not found")
-    DLFile("https://raw.githubusercontent.com/yhamae/spectrum_analyser_tool/master/plot.py")
-    import plot
-try:
     import maser_search
 except ImportError as e:
     print("\"maser_search.py\" is not found")
@@ -69,6 +63,7 @@ default_width = 4
 default_outfile = "out.txt"
 default_iteration = 1
 default_width2 = 8
+default_plotname = ""
 
 
 #################
@@ -78,6 +73,10 @@ try:
     # オプションから引数を取得
     args = sys.argv
     mode = default_mode
+    plotname = default_plotname
+    if '-h'  in args:    # 使い方を表示
+        print(usage)
+        exit()
     filename = YukiUtil.option_index(args, '-fname', default_filename)
     snr = float(YukiUtil.option_index(args, '-s', default_snr))
     width = int(YukiUtil.option_index(args, '-w', default_width))
@@ -92,9 +91,6 @@ try:
     if '-da' in args: mode += "s"   # -da: 読み込んだデータの表示  
     if '-r'  in args: mode += "r"   # -r: 計算結果の表示
     if '-b'  in args: mode += "b"   # -b: smoothing dataの書きだし
-    if '-h'  in args:    # 使い方を表示
-        print(usage)
-        exit()
 except IndexError as e:    # オプションの引数が存在しない場合
     print(err_message)
     print(usage)
@@ -118,6 +114,14 @@ else :
 
 result = []
 ErrFilelist = []
+
+if not plotname == "":
+    try:
+        import plot
+    except ImportError as e:
+        print("\"plot.py\" is not found")
+        DLFile("https://raw.githubusercontent.com/yhamae/spectrum_analyser_tool/master/plot.py")
+        import plot
 
 # for imp, out in tqdm(zip(filelist, outflist)):
 if imp_tqdm:
