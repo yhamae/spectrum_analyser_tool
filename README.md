@@ -21,12 +21,13 @@
 -h 使い方の表示  
 
 ## 使用例  
-    ### 使用例1  
+### 使用例1  
     ```
     Python3 PeakSearcher.py -o dir1 -s 4 -w 4 -ws 7 -a dir2 -p dir3/plot
     ```  
     この場合は、dir2の中にあるファイルを処理する。処理する際のSNRは4、スムージングの幅は4、ピークを検索する幅は7となっている。処理されたデータはテキスト形式のデータはdir1に書き出され、グラフはdir3に`plot****`という名前で書き出される。  
-    ### 使用例2  
+
+### 使用例2  
     ```
     Python3 PeakSearcher.py -o test_data/out.txt -s 20 -w 4 -ws 7 -fname test_data/i18286_H2O_181223.txt -p test.png
     ```  
