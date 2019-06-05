@@ -2,12 +2,12 @@
 
 ##使い方
 ```bash
-Usage: Python PeakSearcher -fname filename -o outputfilename [option]
+Usage: Python PeakSearcher -fname FileName -o OutputfFileName [option]
         -s SNR
-        -W Smoothing width
-        -o output perak list file(引数に-aがある場合は、書き出されるファイル名は個々で指定した名前の後に読み込んだファイル名がくる)
-        -ws maser search width(>maser width)
-        -p plot fiel name(引数に-aがある場合は、書き出されるファイル名は個々で指定した名前の後に読み込んだファイル名がくる)
-        -a input directory(これを指定した場合、-fname filenameは必要ない)
+        -W SmoothingWidth
+        -o OutputPeakListFileName(引数に-aがある場合は、書き出されるファイル名はここで指定した名前の後に読み込んだファイル名がくる)
+        -ws MaserSearchWidth(>maser width)
+        -p PlotFielName(引数に-aがある場合は、書き出されるファイル名はここで指定した名前の後に読み込んだファイル名がくる)
+        -a InputIirectory(これを指定した場合、-fname filenameは必要ない)
         -h 使い方の表示
 ```
