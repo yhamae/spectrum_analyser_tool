@@ -1,7 +1,8 @@
 #spectrum_analyser_tool
 
 ##使い方
-コマンドライン上で`Python PeakSearcher -fname FileName -o OutputfFileName [option]`と実行する。`-fname`、`o`は必ず指定する。（ただし、-aを使ってあるディレクトリ内を一括で処理する場合は`-fname`は指定する必用はない）  
+基本的にはLinuxコマンドと同じように`-`を使ってパラメーターを変更できる。  
+コマンドライン上で`Python PeakSearcher.py -fname FileName -o OutputfFileName [option]`と実行する。`-fname`、`o`は必ず指定する。（ただし、-aを使ってあるディレクトリ内を一括で処理する場合は`-fname`は指定する必用はない）  
 `[option]`は以下の通りになっている。  
 -s SNR  
 -W SmoothingWidth  

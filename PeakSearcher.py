@@ -16,7 +16,7 @@ except ImportError as e:
 # 初期値 #
 #########
 err_message  = "illegal option!"
-usage  = "Usage: Python PeakSearcher -fname FileName -o OutputfFileName [option]\n"
+usage  = "Usage: Python PeakSearcher.py -fname FileName -o OutputfFileName [option]\n"
 usage += "        -s SNR\n"
 usage += "        -W SmoothingWidth\n"
 usage += "        -o OutputPeakListFileName (引数に-aがある場合は、書き出されるファイル名はここで指定した名前の後に読み込んだファイル名がくる)\n"
