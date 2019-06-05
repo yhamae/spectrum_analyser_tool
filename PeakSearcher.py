@@ -1,6 +1,17 @@
+# -*- coding: utf-8 -*-
 import sys
 import os
 import traceback
+import subprocess
+
+def DLFile(url):
+    print("Download start")
+    inp = []
+    inp.append("curl")
+    inp.append("-O")
+    inp.append(url)
+    subprocess.call(inp)
+    del inp
 
 try:
     from tqdm import tqdm
@@ -12,29 +23,31 @@ except ImportError as e:
     imp_tqdm = False
 
 try:
-    import maser_search
-except ImportError as e:
-    print("\"maser_search.py\" is not found")
-    print("Please get \"maser_search.py\" at \"https://github.com/yhamae/spectrum_analyser_tool/blob/master/maser_search.py\"")
-    exit()
-try:
-    import NRODataReduction
-except ImportError as e:
-    print("\"NRODataReduction.py\" is not found")
-    print("Please get \"NRODataReduction.py\" at \"https://github.com/yhamae/spectrum_analyser_tool/blob/master/NRODataReduction.py\"")
-    exit()
-try:
     import YukiUtil
 except ImportError as e:
     print("\"YukiUtil.py\" is not found")
-    print("Please get \"YukiUtil.py\" at \"https://github.com/yhamae/spectrum_analyser_tool/blob/master/YukiUtil.py\"")
-    exit()
+    DLFile("https://raw.githubusercontent.com/yhamae/spectrum_analyser_tool/master/YukiUtil.py")
+    import YukiUtil
 try:
     import plot
 except ImportError as e:
     print("\"plot.py\" is not found")
-    print("Please get \"plot.py\" at \"https://github.com/yhamae/spectrum_analyser_tool/blob/master/NRODataReduction.py\"")
-    exit()
+    DLFile("https://raw.githubusercontent.com/yhamae/spectrum_analyser_tool/master/plot.py")
+    import plot
+try:
+    import maser_search
+except ImportError as e:
+    print("\"maser_search.py\" is not found")
+    DLFile("https://raw.githubusercontent.com/yhamae/spectrum_analyser_tool/master/maser_search.py")
+    import maser_search
+try:
+    import NRODataReduction
+except ImportError as e:
+    print("\"NRODataReduction.py\" is not found")
+    DLFile("https://raw.githubusercontent.com/yhamae/spectrum_analyser_tool/master/NRODataReduction.py")
+    import NRODataReduction
+
+
 
 
 #########

@@ -1,7 +1,12 @@
 import traceback
 import numpy as np
-import matplotlib.pyplot as plt
 import os
+try:
+    import matplotlib.pyplot as plt
+except ImportError as e:
+    print("Not Found \"matplotlib\" in your computer")
+    print("Please Enter Command: pip install matplotlib")
+
 
 class MyPlot:
     def __init__(self):
