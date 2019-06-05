@@ -12,8 +12,8 @@
 -a InputIirectory(これを指定した場合、-fname filenameは必要ない)  
 -h 使い方の表示  
 
-##使用例
-###使用例1
+##使用例  
+###使用例1  
     ```bash
     Python3 PeakSearcher.py -o dir1 -s 4 -w 4 -ws 7 -a dir2 -p dir3/plot
     ```
