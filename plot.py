@@ -5,7 +5,7 @@ try:
     import matplotlib.pyplot as plt
 except ImportError as e:
     print("Not Found \"matplotlib\" in your computer")
-    print("Please install matplotlib")
+    print("Please Enter Command: pip install matplotlib")
     exit()
 
 
