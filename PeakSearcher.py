@@ -248,9 +248,9 @@ for i in bar:
             traceback.print_exc()
         # エラーが起こったこととそのとき読み込んだファイルを記録
         if not len(result) == lresult + 3:
+            ErrFilelist.append(filelist[i])
             for k in range(lresult, lresult + 3):
                 result.append(False)
-                ErrFilelist.append(filelist[i])
 
 
 for status in result:
