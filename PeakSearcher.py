@@ -43,7 +43,7 @@ except ImportError as e:
 
 
 
-def main(args):
+def main(args, peak_list):
     #########
     # 初期値 #
     #########
@@ -60,7 +60,7 @@ def main(args):
     default_filename = ""
     default_snr = 3
     default_width = 4
-    default_outfile = "out.txt"
+    default_outfile = ""
     default_iteration = 1
     default_width2 = 8
     default_plotname = ""
@@ -94,27 +94,29 @@ def main(args):
         print(err_message)
         print(usage)
         exit()
-    except ValueError as e:
+    except ValueError as e: # オプションの引数が間違っている場合
         print(err_message)
         print(usage)
         exit()
 
-    if not directory == "":
+    if not directory == "": # -aオプションを使った場合
         outflist = []
         filelist = os.listdir(directory)
-        for i in range(0, len(filelist)):
-            outflist.append(outfile + os.path.splitext(filelist[i])[0] + '.txt')
+        if not outfile == "":
+            for i in range(0, len(filelist)):
+                outflist.append(outfile + os.path.splitext(filelist[i])[0] + '.txt')
 
-    else :
+    else : # -aオプションを使う場合
         filelist = []
         outflist = []
         filelist.append(filename)
-        outflist.append(outfile)
+        if not outfile == "":
+            outflist.append(outfile)
 
     result = []
     ErrFilelist = []
 
-    if not plotname == "":
+    if not plotname == "": # -pオプションを使う場合
         try:
             import plot
         except ImportError as e:
@@ -122,8 +124,7 @@ def main(args):
             DLFile("https://raw.githubusercontent.com/yhamae/spectrum_analyser_tool/master/plot.py")
             import plot
 
-    # for imp, out in tqdm(zip(filelist, outflist)):
-    if imp_tqdm:
+    if imp_tqdm: # tqdmモジュールが入っているかどうか
         bar = tqdm(range(0, len(filelist)))
     else:
         bar = range(0, len(filelist))
@@ -132,7 +133,6 @@ def main(args):
         try:
 
             lresult = len(result)
-
             peak_channel = []
             peak_freq = []
             peak_T = []
@@ -145,7 +145,6 @@ def main(args):
             nrodata.T = []
             nrodata.filename = directory + filelist[i]
             nrodata.mode = mode
-
             result.append(nrodata.get())
 
             # str型をfloat型に変換
@@ -174,9 +173,11 @@ def main(args):
             maser.width2 = width2
             result.append(maser.find())
 
+            peak_list = maser.peak
+
             try:
                 MADFM = YukiUtil.madfm(T)
-            except statistics.StatisticsError as e:
+            except statistics.StatisticsError as e: # Tに値が入っていない場合
                 if 'c' in mode:
                     print("\n>>> " + str(e))
                     traceback.print_exc()
@@ -189,6 +190,7 @@ def main(args):
                 peak_freq.append(freq[j])
                 peak_T.append(T[j])
                 peak_snr.append(tmp_snr)
+                
             # 単一のファイルのみの解析の場合の標準出力
             if directory == "":
                 if len(maser.peak) != 0:
@@ -207,16 +209,17 @@ def main(args):
             elif 'c' in mode:
                 print(">>>    " + "find " + str(len(maser.peak)) + " peaks in " + filelist[i])
 
-            # 書き出し
-            exp_header  = "Rawfile name     = " + filelist[i] + "\n"
-            exp_header += "Number of peak   = " + str(len(maser.peak)) + "\n" 
-            exp_header += "smoothing width  = " + str(width) + "\n" 
-            exp_header += "SNR              = " + str(snr) + "\n" 
-            exp_header += "Output File name = " + outfile + "\n" 
-            exp_header += "rms (by MADFM)   = " + str(MADFM) + "\n" 
-            exp_header += "filelist[i]ut command    = $ Python3 " + ' '.join(args) + "\n" 
-            exp_header += "\nchannel    freq    val    snr"    # ヘッダー情報
-            YukiUtil.export_data(outflist[i], exp_header, peak_channel, peak_freq, peak_T, peak_snr)
+            if not outfile == "":
+                # 書き出し
+                exp_header  = "Rawfile name     = " + filelist[i] + "\n"
+                exp_header += "Number of peak   = " + str(len(maser.peak)) + "\n" 
+                exp_header += "smoothing width  = " + str(width) + "\n" 
+                exp_header += "SNR              = " + str(snr) + "\n" 
+                exp_header += "Output File name = " + outfile + "\n" 
+                exp_header += "rms (by MADFM)   = " + str(MADFM) + "\n" 
+                exp_header += "filelist[i]ut command    = $ Python3 " + ' '.join(args) + "\n" 
+                exp_header += "\nchannel    freq    val    snr"    # ヘッダー情報
+                YukiUtil.export_data(outflist[i], exp_header, peak_channel, peak_freq, peak_T, peak_snr)
 
 
             if 'c' in mode:
@@ -269,12 +272,11 @@ def main(args):
 
 
 
-
-
-
-
 # Main処理
 if __name__ == "__main__":
-    main(sys.argv)
+    peak_list = []
+    main(sys.argv, peak_list)
+
+
 
     

@@ -17,17 +17,23 @@ class MyPlot:
         self.y2 = 0
         self.rms = 0
         self.fname = ""
+        self.f_size_x = 16
+        self.f_size_y = 9
+        self.dpi = 120
+        self.line_width = 0.5
+        self.x_label = "LSR[km/s]"
+        self.y_label = "T[K]"
     def ExpPlot(self):
         
-        plt.figure(figsize=(16, 9), dpi=120)
-        plt.plot(self.x1, self.y1, linewidth = 0.5)
+        plt.figure(figsize=(int(self.f_size_x), int(self.f_size_y)), dpi=int(self.dpi))
+        plt.plot(self.x1, self.y1, linewidth = float(self.line_width))
         plt.scatter(self.x2, self.y2, facecolors='none', edgecolors='r', linewidth = 0.5, s=100.0)
         # plt.rcParams['font.family'] ='Helvetica-Light'
         plt.title(os.path.splitext(self.fname)[0])
         # plt.subplots_adjust(1,1)
         # plt.legend()
-        plt.xlabel('LSR[km/s]')
-        plt.ylabel('T[K]')
+        plt.xlabel(self.x_label)
+        plt.ylabel(self.y_label)
 
 
 
