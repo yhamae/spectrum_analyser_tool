@@ -2,8 +2,8 @@
 
 ## プログラムの構成  
 このプログラムはメインとなる`PeakSearcher.py`の他に以下の4つのモジュールによって構成されている。  
-- `maser_search.py`  
-- `NRODataReduction.py`  
+- `MaserSearch.py`  
+- `DataLoader.py`  
 - `plot.py`  
 - `YukiUtil.py`  
 使用する際は、これらの5つのファイルを同じディレクトリに置いておく必要がある。

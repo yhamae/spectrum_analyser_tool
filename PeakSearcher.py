@@ -29,17 +29,17 @@ except ImportError as e:
     DLFile("https://raw.githubusercontent.com/yhamae/spectrum_analyser_tool/master/YukiUtil.py")
     import YukiUtil
 try:
-    import maser_search
+    import MaserSearch
 except ImportError as e:
-    print("\"maser_search.py\" is not found")
-    DLFile("https://raw.githubusercontent.com/yhamae/spectrum_analyser_tool/master/maser_search.py")
-    import maser_search
+    print("\"MaserSearch.py\" is not found")
+    DLFile("https://raw.githubusercontent.com/yhamae/spectrum_analyser_tool/master/MaserSearch.py")
+    import MaserSearch
 try:
-    import NRODataReduction
+    import DataLoader
 except ImportError as e:
-    print("\"NRODataReduction.py\" is not found")
-    DLFile("https://raw.githubusercontent.com/yhamae/spectrum_analyser_tool/master/NRODataReduction.py")
-    import NRODataReduction
+    print("\"DataLoader.py\" is not found")
+    DLFile("https://raw.githubusercontent.com/yhamae/spectrum_analyser_tool/master/DataLoader.py")
+    import DataLoader
 
 
 
@@ -139,13 +139,13 @@ def main(args, peak_list):
             peak_snr = []
 
             # データの取得
-            nrodata = NRODataReduction.GetNRO_onoff()
+            nrodata = DataLoader.GetSpectrum()
             nrodata.channel = []
             nrodata.freq = []
             nrodata.T = []
             nrodata.filename = directory + filelist[i]
             nrodata.mode = mode
-            result.append(nrodata.get())
+            result.append(nrodata.get_data())
 
             # str型をfloat型に変換
             channel = [int(s) for s in nrodata.channel]
@@ -162,7 +162,7 @@ def main(args, peak_list):
 
 
             # 輝線の捜索
-            maser = maser_search.SpectrumSearcher()
+            maser = MaserSearch.SpectrumSearcher()
             maser.x = channel
             maser.y = T
             maser.peak = []

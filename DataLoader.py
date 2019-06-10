@@ -3,7 +3,7 @@ import YukiUtil
 import traceback
 import codecs
 
-class GetNRO_onoff:
+class GetSpectrum:
     def __init__(self):
         self.channel = 0
         self.freq = 0
@@ -13,7 +13,7 @@ class GetNRO_onoff:
 
 
 
-    def get(self):
+    def get_data(self):
         try:
             with codecs.open(self.filename, 'r', 'utf-8', 'ignore') as f:
                 line = f.readlines()
