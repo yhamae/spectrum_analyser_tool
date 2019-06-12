@@ -51,6 +51,18 @@ def export_data(*args):
             print(args[j][i], file=f, end = "    ")
         print(file=f)
 
+def export_ldata(*args):
+    # 第一引数: 書き出しファイルの名前（※リストで渡さない）
+    # 第二引数以降: 書き出したいデータ
+    try:
+        with open(args[0], mode = 'w') as f:
+            for line in args[1:]:
+                f.write('\n'.join([str(s) for s in line]))
+    except FileNotFoundError as e:
+        print(">>>    " + e)
+        raceback.print_exc()
+        return False
+
 #######
 # 計算 #
 #######
