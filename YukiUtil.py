@@ -57,7 +57,7 @@ def export_ldata(*args):
     try:
         with open(args[0], mode = 'w') as f:
             for line in args[1:]:
-                f.write('\n'.join([str(s) for s in line]))
+                f.write('\n'.join([str(s) for s in line]) + "\n")
     except FileNotFoundError as e:
         print(">>>    " + e)
         raceback.print_exc()
