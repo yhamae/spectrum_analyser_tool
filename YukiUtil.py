@@ -1,5 +1,4 @@
 import sys
-from inspect import currentframe
 import codecs
 import numpy as np
 import statistics
@@ -30,12 +29,12 @@ def option_index(l, x, default = ""):
 
 # パラメーター表示（変数名に.を含むものに使うと変数名が???になる）
 def chkprint(*args):  # For Debag, show value
-    names = {id(v): k for k, v in currentframe().f_back.f_locals.items()}
+    names = {id(v): k for k, v in inspect.currentframe().f_back.f_locals.items()}
     print(str(inspect.currentframe().f_back.f_lineno).zfill(4) + ":    " + '\n         '.join(names.get(id(arg), '???') + ' = ' + repr(arg) for arg in args))
 
 
 def chklprint(*args):  # For Debag, show value length
-    names = {id(v): k for k, v in currentframe().f_back.f_locals.items()}
+    names = {id(v): k for k, v in inspect.currentframe().f_back.f_locals.items()}
     print(str(inspect.currentframe().f_back.f_lineno).zfill(4) + ":    len(" + '\n         len('.join(names.get(id(arg), '???') + ') = ' + str(len(arg)) for arg in args))
 
 # データの書き出し
