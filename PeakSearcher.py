@@ -42,241 +42,251 @@ except ImportError as e:
     DLFile("https://raw.githubusercontent.com/yhamae/spectrum_analyser_tool/master/DataLoader.py")
     import DataLoader
 
+class PeakSearch:
+    def __init__(self):
+        self.args = []
+        self.peak_list = []
+        self.err_message  = "illegal option!"
+        self.usage  = "Usage: Python PeakSearcher.py -fname FileName -o OutputfFileName [option]\n"
+        self.usage += "        -s SNR\n"
+        self.usage += "        -W SmoothingWidth\n"
+        self.usage += "        -o OutputPeakListFileName (引数に-aがある場合は、書き出されるファイル名はここで指定した名前の後に読み込んだファイル名がくる)\n"
+        self.usage += "        -ws MaserSearchWidth (>maser width)\n"
+        self.usage += "        -p PlotFielName (引数に-aがある場合は、書き出されるファイル名はここで指定した名前の後に読み込んだファイル名がくる)\n"
+        self.usage += "        -a InputIirectory (これを指定した場合、-fname filenameは必要ない)\n"
+        self.usage += "        -h 使い方の表示\n"
+        self.mode = ""
+        self.filename = ""
+        self.snr = 3
+        self.width = 4
+        self.outfile = ""
+        self.iteration = 1
+        self.width2 = 8
+        self.plotname = ""
+        self.result = []
+        self.Errfilelist = []
+        self.filelist = []
+        self.outflist = []
 
-
-def main(args, peak_list):
-    #########
-    # 初期値 #
-    #########
-    err_message  = "illegal option!"
-    usage  = "Usage: Python PeakSearcher.py -fname FileName -o OutputfFileName [option]\n"
-    usage += "        -s SNR\n"
-    usage += "        -W SmoothingWidth\n"
-    usage += "        -o OutputPeakListFileName (引数に-aがある場合は、書き出されるファイル名はここで指定した名前の後に読み込んだファイル名がくる)\n"
-    usage += "        -ws MaserSearchWidth (>maser width)\n"
-    usage += "        -p PlotFielName (引数に-aがある場合は、書き出されるファイル名はここで指定した名前の後に読み込んだファイル名がくる)\n"
-    usage += "        -a InputIirectory (これを指定した場合、-fname filenameは必要ない)\n"
-    usage += "        -h 使い方の表示\n"
-    default_mode = ""
-    default_filename = ""
-    default_snr = 3
-    default_width = 4
-    default_outfile = ""
-    default_iteration = 1
-    default_width2 = 8
-    default_plotname = ""
-
-
-    #################
-    # Main Function #
-    #################
-    try:
-        # オプションから引数を取得
-        mode = default_mode
-        plotname = default_plotname
-        if '-h'  in args:    # 使い方を表示
-            print(usage)
-            exit()
-        filename = YukiUtil.option_index(args, '-fname', default_filename)
-        snr = float(YukiUtil.option_index(args, '-s', default_snr))
-        width = int(YukiUtil.option_index(args, '-w', default_width))
-        outfile = YukiUtil.option_index(args, '-o', default_outfile)
-        iteration = int(YukiUtil.option_index(args, '-i', default_iteration))
-        width2 = int(YukiUtil.option_index(args, '-ws', default_width2))
-        plotname = YukiUtil.option_index(args, '-p')
-        directory = YukiUtil.option_index(args, '-a') # 指定したディレクトリ内のすべてのファイルに対して実行
-        if '-d'  in args: mode += "d"   # -d: デバッグモード
-        if '-sc' in args: mode += "c"   # -sc: ステータスコードの表示
-        if '-prm'  in args: mode += "p"   # -p: パラメーター表示
-        if '-da' in args: mode += "s"   # -da: 読み込んだデータの表示  
-        if '-r'  in args: mode += "r"   # -r: 計算結果の表示
-        if '-b'  in args: mode += "b"   # -b: smoothing dataの書きだし
-    except IndexError as e:    # オプションの引数が存在しない場合
-        print(err_message)
-        print(usage)
-        exit()
-    except ValueError as e: # オプションの引数が間違っている場合
-        print(err_message)
-        print(usage)
-        exit()
-
-    if not directory == "": # -aオプションを使った場合
-        outflist = []
-        filelist = os.listdir(directory)
-        if not outfile == "":
-            for i in range(0, len(filelist)):
-                outflist.append(outfile + os.path.splitext(filelist[i])[0] + '.txt')
-
-    else : # -aオプションを使う場合
-        filelist = []
-        outflist = []
-        filelist.append(filename)
-        if not outfile == "":
-            outflist.append(outfile)
-
-    result = []
-    ErrFilelist = []
-
-    if not plotname == "": # -pオプションを使う場合
+    def get_parameter_by_args(self):
         try:
-            import plot
-        except ImportError as e:
-            print("\"plot.py\" is not found")
-            DLFile("https://raw.githubusercontent.com/yhamae/spectrum_analyser_tool/master/plot.py")
-            import plot
+            # オプションから引数を取得
+            if '-h'  in self.args:    # 使い方を表示
+                print(self.usage)
+                exit()
+            self.filename = YukiUtil.option_index(self.args, '-fname', self.filename)
+            self.snr = float(YukiUtil.option_index(self.args, '-s', self.snr))
+            self.width = int(YukiUtil.option_index(self.args, '-w', self.width))
+            self.outfile = YukiUtil.option_index(self.args, '-o', self.outfile)
+            self.iteration = int(YukiUtil.option_index(self.args, '-i', self.iteration))
+            self.width2 = int(YukiUtil.option_index(self.args, '-ws', self.width2))
+            self.plotname = YukiUtil.option_index(self.args, '-p')
+            self.directory = YukiUtil.option_index(self.args, '-a') # 指定したディレクトリ内のすべてのファイルに対して実行
+            if '-d'  in self.args: self.mode += "d"   # -d: デバッグモード
+            if '-sc' in self.args: self.mode += "c"   # -sc: ステータスコードの表示
+            if '-prm'  in self.args: self.mode += "p"   # -p: パラメーター表示
+            if '-da' in self.args: self.mode += "s"   # -da: 読み込んだデータの表示  
+            if '-r'  in self.args: self.mode += "r"   # -r: 計算結果の表示
+            if '-b'  in self.args: self.mode += "b"   # -b: smoothing dataの書きだし
+        except IndexError as e:    # オプションの引数が存在しない場合
+            print(self.err_message)
+            print(self.usage)
+            return False
+        except ValueError as e: # オプションの引数が間違っている場合
+            print(self.err_message)
+            print(self.usage)
+            return False
 
-    if imp_tqdm: # tqdmモジュールが入っているかどうか
-        bar = tqdm(range(0, len(filelist)))
-    else:
-        bar = range(0, len(filelist))
+        if not self.directory == "": # -aオプションを使った場合
+            # self.outflist = []
+            self.filelist = os.listdir(self.directory)
+            if not self.outfile == "":
+                for i in range(0, len(self.filelist)):
+                    self.outflist.append(self.outfile + os.path.splitext(self.filelist[i])[0] + '.txt')
 
-    for i in bar:
-        try:
+        else : # -aオプションを使う場合
+            # self.filelist = []
+            # self.outflist = []
+            self.filelist.append(self.filename)
+            if not self.outfile == "":
+                self.outflist.append(self.outfile)
 
-            lresult = len(result)
-            peak_channel = []
-            peak_freq = []
-            peak_T = []
-            peak_snr = []
-
-            # データの取得
-            nrodata = DataLoader.GetSpectrum()
-            nrodata.channel = []
-            nrodata.freq = []
-            nrodata.T = []
-            nrodata.filename = directory + filelist[i]
-            nrodata.mode = mode
-            result.append(nrodata.get_data())
-
-            # str型をfloat型に変換
-            channel = [int(s) for s in nrodata.channel]
-            freq = [float(s) for s in nrodata.freq]
-            T = [float(s) for s in nrodata.T]
-
-
-
-            if 'c' in mode:
-                print("------------------------------\n" + "StatusCode >     " + "data() = " + str(result[0]))
-            if 'p' in mode:
-                print("----- Number of value -----")
-                YukiUtil.chklprint(channel, freq, T)
-
-
-            # 輝線の捜索
-            maser = MaserSearch.SpectrumSearcher()
-            maser.x = channel
-            maser.y = T
-            maser.peak = []
-            maser.snr = snr
-            maser.width = width
-            maser.mode = mode
-            maser.iteration = iteration
-            maser.width2 = width2
-            result.append(maser.find())
-
-            peak_list = maser.peak
-
+    def find_peak(self):
+        #################
+        # Main Function #
+        #################
+        if not self.plotname == "": # -pオプションを使う場合
             try:
-                MADFM = YukiUtil.madfm(T)
-            except statistics.StatisticsError as e: # Tに値が入っていない場合
-                if 'c' in mode:
-                    print("\n>>> " + str(e))
-                    traceback.print_exc()
-                    print("\n")
+                import plot
+            except ImportError as e:
+                print("\"plot.py\" is not found")
+                DLFile("https://raw.githubusercontent.com/yhamae/spectrum_analyser_tool/master/plot.py")
+                import plot
+
+        if imp_tqdm: # tqdmモジュールが入っているかどうか
+            bar = tqdm(range(0, len(self.filelist)))
+        else:
+            bar = range(0, len(self.filelist))
+
+        for i in bar:
+            if self.filelist[i][0] == ".":
+                continue
+            try:
+
+                lresult = len(self.result)
+                peak_channel = []
+                peak_freq = []
+                peak_T = []
+                peak_snr = []
 
 
-            for j in maser.peak:
-                tmp_snr = float(T[j] / MADFM)
-                peak_channel.append(channel[j])
-                peak_freq.append(freq[j])
-                peak_T.append(T[j])
-                peak_snr.append(tmp_snr)
-                
-            # 単一のファイルのみの解析の場合の標準出力
-            if directory == "":
-                if len(maser.peak) != 0:
-                    print("----- peak channels is bellow -----")
-                    print(">>>   channel       Value         SNR")
-                    for i in maser.peak:
-                        tmp_snr = float(T[i] / MADFM)
-                        print('>>>     {0:>5}  {1:>10.9}   {2:>9.6}'.format(channel[i], T[i], tmp_snr))
-                    print(">>>\n>>>    Number of peak: " + str(len(maser.peak)))
-                else:
-                    print("#########################")
-                    print("Can not find peak channel")
-                    print("#########################")
+                # データの取得
+                nrodata = DataLoader.GetSpectrum()
+                nrodata.channel = []
+                nrodata.freq = []
+                nrodata.T = []
+                nrodata.filename = self.directory + self.filelist[i]
+                nrodata.mode = self.mode
 
-            # 複数ファイルを解析するときの標準出力
-            elif 'c' in mode:
-                print(">>>    " + "find " + str(len(maser.peak)) + " peaks in " + filelist[i])
+                if 'p' in self.mode:
+                    YukiUtil.chkprint(nrodata.filename)
 
-            if not outfile == "":
-                # 書き出し
-                exp_header  = "Rawfile name     = " + filelist[i] + "\n"
-                exp_header += "Number of peak   = " + str(len(maser.peak)) + "\n" 
-                exp_header += "smoothing width  = " + str(width) + "\n" 
-                exp_header += "SNR              = " + str(snr) + "\n" 
-                exp_header += "Output File name = " + outfile + "\n" 
-                exp_header += "rms (by MADFM)   = " + str(MADFM) + "\n" 
-                exp_header += "filelist[i]ut command    = $ Python3 " + ' '.join(args) + "\n" 
-                exp_header += "\nchannel    freq    val    snr"    # ヘッダー情報
-                YukiUtil.export_data(outflist[i], exp_header, peak_channel, peak_freq, peak_T, peak_snr)
+                self.result.append(nrodata.get_data())
+
+                # str型をfloat型に変換
+                channel = [int(s) for s in nrodata.channel]
+                freq = [float(s) for s in nrodata.freq]
+                T = [float(s) for s in nrodata.T]
 
 
-            if 'c' in mode:
-                print("------------------------------\n" + "status code >    " + "SpectrumSearcher(): " + str(result[1]))
 
-            if not plotname == "":
-                plotpeak = plot.MyPlot()
+                if 'c' in self.mode:
+                    print("------------------------------\n" + "StatusCode >     " + "data() = " + str(self.result[0]))
+                if 'p' in self.mode:
+                    print("----- Number of value -----")
+                    YukiUtil.chklprint(channel, freq, T)
 
-                if not directory == "":
 
-                    plotpeak.fname = plotname + os.path.splitext(filelist[i])[0] + '.png'
+                # 輝線の捜索
+                maser = MaserSearch.SpectrumSearcher()
+                maser.x = channel
+                maser.y = T
+                maser.peak = []
+                maser.snr = self.snr
+                maser.width = self.width
+                maser.mode = self.mode
+                maser.iteration = self.iteration
+                maser.width2 = self.width2
+                self.result.append(maser.find())
+
+                self.peak_list = maser.peak
+
+                try:
+                    MADFM = YukiUtil.madfm(T)
+                except statistics.StatisticsError as e: # Tに値が入っていない場合
+                    if 'c' in self.mode:
+                        print("\n>>> " + str(e))
+                        traceback.print_exc()
+                        print("\n")
+
+
+                for j in maser.peak:
+                    tmp_snr = float(T[j] / MADFM)
+                    peak_channel.append(channel[j])
+                    peak_freq.append(freq[j])
+                    peak_T.append(T[j])
+                    peak_snr.append(tmp_snr)
                     
-                else:
-                    plotpeak.fname = plotname
-                # print(plotpeak.fname)
-                plotpeak.x1 = freq
-                plotpeak.y1 = T
-                plotpeak.x2 = peak_freq
-                plotpeak.y2 = peak_T
-                plotpeakrms = MADFM
-                result.append(plotpeak.ExpPlot())
+                # 単一のファイルのみの解析の場合の標準出力
+                if self.directory == "":
+                    if len(maser.peak) != 0:
+                        print("----- peak channels is bellow -----")
+                        print(">>>   channel       Value         SNR")
+                        for i in maser.peak:
+                            tmp_snr = float(T[i] / MADFM)
+                            print('>>>     {0:>5}  {1:>10.9}   {2:>9.6}'.format(channel[i], T[i], tmp_snr))
+                        print(">>>\n>>>    Number of peak: " + str(len(maser.peak)))
+                    else:
+                        print("#########################")
+                        print("Can not find peak channel")
+                        print("#########################")
+
+                # 複数ファイルを解析するときの標準出力
+                elif 'c' in self.mode:
+                    print(">>>    " + "find " + str(len(maser.peak)) + " peaks in " + self.filelist[i])
+
+                if not self.outfile == "":
+                    # 書き出し
+                    exp_header  = "Rawfile name     = " + self.filelist[i] + "\n"
+                    exp_header += "Number of peak   = " + str(len(maser.peak)) + "\n" 
+                    exp_header += "smoothing width  = " + str(self.width) + "\n" 
+                    exp_header += "SNR              = " + str(self.snr) + "\n" 
+                    exp_header += "Output File name = " + self.outfile + "\n" 
+                    exp_header += "rms (by MADFM)   = " + str(MADFM) + "\n" 
+                    exp_header += "self.filelist[i]ut command    = $ Python3 " + ' '.join(self.args) + "\n" 
+                    exp_header += "\nchannel    freq    val    snr"    # ヘッダー情報
+                    YukiUtil.export_data(self.outflist[i], exp_header, peak_channel, peak_freq, peak_T, peak_snr)
+
+
+                if 'c' in self.mode:
+                    print("------------------------------\n" + "status code >    " + "SpectrumSearcher(): " + str(self.result[1]))
+
+                if not self.plotname == "":
+                    plotpeak = plot.MyPlot()
+
+                    if not self.directory == "":
+
+                        plotpeak.fname = self.plotname + os.path.splitext(self.filelist[i])[0] + '.png'
+                        
+                    else:
+                        plotpeak.fname = self.plotname
+                    # print(plotpeak.fname)
+                    plotpeak.x1 = freq
+                    plotpeak.y1 = T
+                    plotpeak.x2 = peak_freq
+                    plotpeak.y2 = peak_T
+                    plotpeakrms = MADFM
+                    self.result.append(plotpeak.ExpPlot())
 
 
 
-        except ValueError as e:
-            if 'c' in mode:
-                print(">>>can not find peaks for Err\n>>> " + str(e))
-                traceback.print_exc()
-            # エラーが起こったこととそのとき読み込んだファイルを記録
-            if not len(result) == lresult + 3:
-                ErrFilelist.append(filelist[i])
-                for k in range(lresult, lresult + 3):
-                    result.append(False)
+            except ValueError as e:
+                if 'c' in self.mode:
+                    print(">>>can not find peaks for Err\n>>> " + str(e))
+                    traceback.print_exc()
+                # エラーが起こったこととそのとき読み込んだファイルを記録
+                if not len(self.result) == lresult + 3:
+                    self.Errfilelist.append(self.filelist[i])
+                    for k in range(lresult, lresult + 3):
+                        self.result.append(False)
 
 
-    for status in result:
-        if not status:
-            print("--------------------------------")
-            print("Program has incorrectly finished")
-            print(str(len(ErrFilelist)) + " Error found")
-            print("--------------------------------")
-            print("<<< Err files is bellow >>>")
-            print("- ", end = "")
-            print('\n- '.join(ErrFilelist))
-            exit()
+        for status in self.result:
+            if not status:
+                print("--------------------------------")
+                print("Program has incorrectly finished")
+                print(str(len(self.Errfilelist)) + " Error found")
+                print("--------------------------------")
+                print("<<< Err files is bellow >>>")
+                print("- ", end = "")
+                print('\n- '.join(self.Errfilelist))
+                exit()
 
-    print("------------------------------")
-    print("Program has correctly finished")
-    print("------------------------------")
+        print("------------------------------")
+        print("Program has correctly finished")
+        print("------------------------------")
 
 
 
 # Main処理
 if __name__ == "__main__":
-    peak_list = []
-    main(sys.argv, peak_list)
+    p = PeakSearch()
+    p.args = sys.argv
+    p.get_parameter_by_args()
+    p.find_peak()
+
+    # peak_list = []
+    # main(sys.argv, peak_list)
 
 
 
