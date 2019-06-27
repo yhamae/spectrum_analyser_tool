@@ -1,5 +1,4 @@
 #! /usr/local/bin/Python3
-# -*- coding: utf-8 -*-
 import sys
 import os
 import traceback
