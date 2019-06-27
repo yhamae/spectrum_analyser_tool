@@ -37,6 +37,11 @@ def chklprint(*args):  # For Debag, show value length
     names = {id(v): k for k, v in inspect.currentframe().f_back.f_locals.items()}
     print(str(inspect.currentframe().f_back.f_lineno).zfill(4) + ":    len(" + '\n         len('.join(names.get(id(arg), '???') + ') = ' + str(len(arg)) for arg in args))
 
+def chkprint2(val_name, val):
+    print(str(inspect.currentframe().f_back.f_lineno).zfill(4) + ":    " + val_name + " = " + val)
+def chklprint2(val_name, val):
+    print(str(inspect.currentframe().f_back.f_lineno).zfill(4) + ":    len(" + val_name + ") = " + len(val))
+
 # データの書き出し
 def export_data(*args):
     # 第一引数: 書き出しファイルの名前（※リストで渡さない）
