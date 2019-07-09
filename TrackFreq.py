@@ -52,35 +52,31 @@ class TrackingFrequently:
         self.peak_val = []
         self.args = []
         self.debag = False
+        self.flist - []
+        self.peak_date = []
+
+    def get_parameter_by_args(self):
+        pass:
 
     def get_peak_data(self):
-        tmp2 = []
-        tmp3 = []
-        try:
-            for file in self.source_data:
-                with codecs.open(file, 'r', 'utf-8', 'ignore') as f:
-                    tmp = data.split()
-                    if len(tmp) == 8:
-                        continue
-                    for i in range(9, len(tmp))
-                        tmp2.append(tmp[1])
-                        tmp3.append(tmp[2])
-                    self.peak_freq.append(tmp2)
-                    self.peak_val.append(tmp3)
-                    
+        tmp_list = os.listdir(self.directory)
+        for data in tmp_list
+            if self.source in data:
+                self.fist.append(self.directory + data)
+        gp = DataLoader.GetPeak()
+        gp.header_num = 7
 
-            if self.debag:
-                chkprint2("self.peak_freq", self.peak_freq)
-                chkprint2("self.peak_val", self.peak_val)
-            return True
-        except FileNotFoundError as e:
-            print(e)
-            traceback.print_exc()
-            return False
-        except IndexError as e:
-            print(e)
-            traceback.print_exc()
-            return False
+        for file in self.flist:
+            gp.filename = file
+            gp.get_peak()
+            self.peak_freq.append(gp.peak_freq)
+            self.peak_val.append(gp.peak_val)
+            
+            self.peak_date.append()
+
+
+        ftp = plot.MyPlot()
+        
 
 
 

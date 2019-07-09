@@ -42,3 +42,14 @@ class MyPlot:
         plt.close()
 
         return True
+
+
+    def freq_tracking_plot(self):
+        plt.figure(figsize=(int(self.f_size_x), int(self.f_size_y)), dpi=int(self.dpi))
+        plt.plot(self.x1, self.y1, linewidth = float(self.line_width))
+        plt.title(os.path.splitext(self.fname)[0])
+        plt.xlabel(self.x_label)
+        plt.ylabel(self.y_label)
+        plt.savefig(self.fname, bbox_inches = 'tight')
+        plt.close()
+        return True

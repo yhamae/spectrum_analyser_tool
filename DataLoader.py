@@ -1,7 +1,8 @@
 import numpy as np
-import YukiUtil
+import YukiUtil as util
 import traceback
 import codecs
+import sys
 
 class GetSpectrum:
     def __init__(self):
@@ -10,6 +11,7 @@ class GetSpectrum:
         self.T = 0
         self.filename = ""
         self.mode = 0
+        self.date = ""
 
 
 
@@ -50,5 +52,39 @@ class GetSpectrum:
         #     return e
         else:
             return True
+class GetPeak:
+    def __init__(self):
+        self.peak_freq = []
+        self.peak_val = []
+        self.fname = ""
+        self.mode = ""
+        self.header_num = 0
+        self.date = 0
+
+    def get_peak(self):
+        try:
+            with codecs.open(self.fname, 'r', 'utf-8', 'ignore') as f:
+                line = f.readlines()
+            for tmp in line:
+                if 'date' in tmp:
+                    self.date = tmp.split("=")[1]
+                    break:
+            for i in range(self.header_num, len(line)):
+                tmp = line[i].split()
+                self.peak_freq.append(tmp[2])
+                self.peak_val.append(tmp[3])
+                if 's' in self.mode:
+                    util.chkprint(tmp[2], tmp[3])
+            return True
+        except FileNotFoundError as e:
+            print(self.filename + ": No such file or directory")
+            return False
+if __name__ == "__main__":
+    p = GetPeak()
+    p.fname = sys.argv[1]
+    p.header_num = 9
+    p.get_peak()
+    util.chkprint2("freq", p.peak_freq)
+    util.chkprint2("val", p.peak_val)
 
 
