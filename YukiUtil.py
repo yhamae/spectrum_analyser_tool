@@ -5,6 +5,7 @@ import statistics
 import math
 import traceback
 import inspect
+import datetime
 
 ################
 # ユーティリティ #
@@ -86,3 +87,33 @@ def madfm(x):
         return statistics.median(med2) / 0.6744888
     except statistics.StatisticsError as e:
         return False
+
+
+
+def datetime2mjd(t):
+    datetime_mjd0 = datetime.datetime(1968,5,23,9,0,0)
+    delta = t - datetime_mjd0
+    return delta.total_seconds()/(24*60*60.0)
+
+def datetime2mjs(t):
+    datetime_mjd0 = datetime.datetime(1968,5,23,9,0,0)
+    delta = t - datetime_mjd0
+    return delta.total_seconds()
+
+def mjd2datetime(mjd):
+    deltaday = round(mjd,2) - 16140.625 # 2012/08/01 base
+    year = 2012
+    dmonth = int(deltaday//32)
+    dday = int(deltaday//1)
+    hour = int((deltaday-dday)//round(1.0/24.0,2))
+    time = datetime.datetime(year, 8+dmonth, 1+dday, hour)
+    return time
+
+###########
+# デバッグ #
+###########
+if __name__ == '__main__':
+    time = datetime.datetime.now()
+    print('Datetime:',time)
+    print('MJD:',datetime2mjd(time))
+    print('MJS:',datetime2mjs(time))
