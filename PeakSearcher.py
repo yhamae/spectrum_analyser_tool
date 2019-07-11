@@ -4,14 +4,9 @@ import os
 import traceback
 import subprocess
 
-def DLFile(url):
-    print(">>>    Start download from " + url)
-    inp = []
-    inp.append("curl")
-    inp.append("-O")
-    inp.append(url)
-    subprocess.call(inp)
-    del inp
+import YukiUtil
+import MaserSearch
+import DataLoader
 
 try:
     from tqdm import tqdm
@@ -22,24 +17,6 @@ except ImportError as e:
     print(">>>    Example Install Command: pip install tqdm")
     imp_tqdm = False
 
-try:
-    import YukiUtil
-except ImportError as e:
-    print("\"YukiUtil.py\" is not found")
-    DLFile("https://raw.githubusercontent.com/yhamae/spectrum_analyser_tool/master/YukiUtil.py")
-    import YukiUtil
-try:
-    import MaserSearch
-except ImportError as e:
-    print("\"MaserSearch.py\" is not found")
-    DLFile("https://raw.githubusercontent.com/yhamae/spectrum_analyser_tool/master/MaserSearch.py")
-    import MaserSearch
-try:
-    import DataLoader
-except ImportError as e:
-    print("\"DataLoader.py\" is not found")
-    DLFile("https://raw.githubusercontent.com/yhamae/spectrum_analyser_tool/master/DataLoader.py")
-    import DataLoader
 
 class PeakSearch:
     def __init__(self):
@@ -56,16 +33,17 @@ class PeakSearch:
         self.usage += "        -h 使い方の表示\n"
         self.mode = ""
         self.filename = ""
-        self.snr = 3
+        self.snr = 5
         self.width = 4
         self.outfile = ""
         self.iteration = 1
-        self.width2 = 8
+        self.width2 = 7
         self.plotname = ""
         self.result = []
         self.Errfilelist = []
         self.filelist = []
         self.outflist = []
+        self.directory = ""
 
     def get_parameter_by_args(self):
         try:
@@ -170,6 +148,7 @@ class PeakSearch:
                 maser = MaserSearch.SpectrumSearcher()
                 maser.x = channel
                 maser.y = T
+                maser.z = T
                 maser.peak = []
                 maser.snr = self.snr
                 maser.width = self.width
@@ -177,11 +156,36 @@ class PeakSearch:
                 maser.iteration = self.iteration
                 maser.width2 = self.width2
                 self.result.append(maser.find())
+                maser.z = []
+                
 
+
+                self.remove_width = 10
+
+                for j in range(0, len(channel), self.remove_width * self.width2):
+                    count = 0
+                    tmp = []
+                    # tmp2 = []
+                    for k in range(j, j + self.remove_width * self.width2):
+                        if k == len(channel): break
+                        tmp.append(T[k])
+                        # tmp2.append(freq[k])
+                        
+                        if k + 1 in maser.peak:
+                            # print(k)
+                            count += 1
+                    if count == 0:
+                        maser.z.extend(tmp)
+                        # xval.extend(tmp2)
+                # print(maser.z)
+                # YukiUtil.chklprint(maser.z)
+
+                maser.peak = []
+                self.result.append(maser.find())
                 self.peak_list = maser.peak
 
                 try:
-                    MADFM = YukiUtil.madfm(T)
+                    MADFM = YukiUtil.madfm(maser.z)
                 except statistics.StatisticsError as e: # Tに値が入っていない場合
                     if 'c' in self.mode:
                         print("\n>>> " + str(e))
@@ -190,10 +194,10 @@ class PeakSearch:
 
 
                 for j in maser.peak:
-                    tmp_snr = float(T[j] / MADFM)
-                    peak_channel.append(channel[j])
-                    peak_freq.append(freq[j])
-                    peak_T.append(T[j])
+                    tmp_snr = float(T[j - 1] / MADFM)
+                    peak_channel.append(channel[j - 1])
+                    peak_freq.append(freq[j - 1])
+                    peak_T.append(T[j - 1])
                     peak_snr.append(tmp_snr)
                     
                 # 単一のファイルのみの解析の場合の標準出力
@@ -201,9 +205,9 @@ class PeakSearch:
                     if len(maser.peak) != 0:
                         print("----- peak channels is bellow -----")
                         print(">>>   channel       Value         SNR")
-                        for i in maser.peak:
-                            tmp_snr = float(T[i] / MADFM)
-                            print('>>>     {0:>5}  {1:>10.9}   {2:>9.6}'.format(channel[i], T[i], tmp_snr))
+                        for j in maser.peak:
+                            tmp_snr = float(T[j - 1] / MADFM)
+                            print('>>>     {0:>5}  {1:>10.9}   {2:>9.6}'.format(channel[j - 1], T[j - 1], tmp_snr))
                         print(">>>\n>>>    Number of peak: " + str(len(maser.peak)))
                     else:
                         print("#########################")
@@ -245,7 +249,8 @@ class PeakSearch:
                     plotpeak.y1 = T
                     plotpeak.x2 = peak_freq
                     plotpeak.y2 = peak_T
-                    plotpeakrms = MADFM
+                    plotpeak.rms = MADFM
+                    plotpeak.snr = self.snr
                     self.result.append(plotpeak.ExpPlot())
 
 
@@ -255,9 +260,9 @@ class PeakSearch:
                     print(">>>can not find peaks for Err\n>>> " + str(e))
                     traceback.print_exc()
                 # エラーが起こったこととそのとき読み込んだファイルを記録
-                if not len(self.result) == lresult + 3:
+                if not len(self.result) == lresult + 4:
                     self.Errfilelist.append(self.filelist[i])
-                    for k in range(lresult, lresult + 3):
+                    for k in range(lresult, lresult + 4):
                         self.result.append(False)
 
 

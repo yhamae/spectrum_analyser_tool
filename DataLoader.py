@@ -12,7 +12,7 @@ class GetSpectrum:
         self.filename = ""
         self.mode = 0
         self.date = ""
-	self.MJD = 0
+        self.MJD = 0
 
 
 
@@ -23,12 +23,12 @@ class GetSpectrum:
 
             for data in line:
                 tmp = data.split()
-		if 'LSCRT9(1) = file create year' in tmp:
-			year = int(tmp.split("=")[2].strip())
-		if 'LSCRT9(2) = file create month' in tmp:
-			month = int(tmp.split("=")[2].strip())
-		if 'LSCRT9(3) = file create day' in tmp:
-			day = int(tmp.split("=")[2].strip())
+                if 'LSCRT9(1) = file create year' in tmp:
+                    year = int(tmp.split("=")[2].strip())
+                if 'LSCRT9(2) = file create month' in tmp:
+                    month = int(tmp.split("=")[2].strip())
+                if 'LSCRT9(3) = file create day' in tmp:
+                    day = int(tmp.split("=")[2].strip())
 
                 if len(tmp) > 1 and tmp[0].isnumeric():
                     if 'd' in self.mode:
@@ -75,7 +75,7 @@ class GetPeak:
             for tmp in line:
                 if 'date' in tmp:
                     self.date = tmp.split("=")[1]
-                    break:
+                    break
             for i in range(self.header_num, len(line)):
                 tmp = line[i].split()
                 self.peak_freq.append(tmp[2])

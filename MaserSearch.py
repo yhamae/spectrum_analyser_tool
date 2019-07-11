@@ -8,6 +8,7 @@ class SpectrumSearcher:
     def __init__(self):
         self.x = 0
         self.y = 0
+        self.z = 0
         self.peak = 0
         self.snr  = 0
         self.width = 0
@@ -23,10 +24,12 @@ class SpectrumSearcher:
             while True:
                 x2 = []
                 y2 = []
+                z2 = []
                 tmp2 = []
                 tmp3 = []
                 # チャンネルを積分
-                if i != self.iteration or self.iteration == 1:
+                if self.width != 1:
+
                     for j in range(0, len(self.x) - self.width, self.width):
                         tmp = 0
                         x2.append(self.x[j])
@@ -41,7 +44,7 @@ class SpectrumSearcher:
                     x2 = self.x
                     y2 = self.y
 
-                MADFM = YukiUtil.madfm(y2)
+                MADFM = YukiUtil.madfm([float(s * self.width) for s in self.z])
 
                 if 'r' in self.mode:
                     print("------------------------------")
@@ -87,11 +90,14 @@ class SpectrumSearcher:
                         peak_val = max(tmp4)
                         range_list.append(peak_val)
                         l = tmp4.index(peak_val)
-                        self.peak.append(self.x[l + j * self.width - self.width2 - 1])
+                        m = l + j * self.width - self.width2
+                        # print(m, self.x[m], self.y[m - 1], self.y[m], self.y[m + 1], self.y[m + 2])
+                        if self.y[m] - self.y[m - 1] > 0 and self.y[m + 1] - self.y[m] < 0:
+                            self.peak.append(self.x[m])
                     del tmp4
 
-
-                self.width -= 1
+                    # print(len(self.x), len(self.y))
+                
 
                 del x2, y2
 
@@ -99,6 +105,7 @@ class SpectrumSearcher:
                     # print(">>>    iteration: " + str(i))
                     break
                 i += 1
+                return True
 
             
 
@@ -129,5 +136,5 @@ class SpectrumSearcher:
         else:
             return True
 
-        	
+            
 
