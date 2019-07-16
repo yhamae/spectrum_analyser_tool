@@ -31,7 +31,7 @@ class GetSpectrum:
                 if 'LSCRT9(3) = file create day' in tmp:
                     day = int(tmp.split("=")[2].strip())
 
-                if len(tmp) > 1 and tmp[0].isnumeric() and tmp[2] >= self.min:
+                if len(tmp) > 1 and tmp[0].isnumeric() and float(tmp[2]) >= self.min:
                     if 'd' in self.mode:
                         print("------------------------------")
                         print('>>>     {0:>5}  {1:>10.9}  {1:>10.9}'.format(tmp[0], tmp[1], tmp[2]))
