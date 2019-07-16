@@ -187,18 +187,21 @@ class PeakSearch:
                 try:
                     MADFM = YukiUtil.madfm(maser.z)
                 except statistics.StatisticsError as e: # Tに値が入っていない場合
+                    print(e)
                     if 'c' in self.mode:
                         print("\n>>> " + str(e))
                         traceback.print_exc()
                         print("\n")
 
-
-                for j in maser.peak:
-                    tmp_snr = float(T[j - 1] / MADFM)
-                    peak_channel.append(channel[j - 1])
-                    peak_freq.append(freq[j - 1])
-                    peak_T.append(T[j - 1])
-                    peak_snr.append(tmp_snr)
+                try:
+                    for j in maser.peak:
+                        tmp_snr = float(T[j - 1] / MADFM)
+                        peak_channel.append(channel[j - 1])
+                        peak_freq.append(freq[j - 1])
+                        peak_T.append(T[j - 1])
+                        peak_snr.append(tmp_snr)
+                except IndexError as e:
+                    self.result[len(self.result) - 1] = False
                     
                 # 単一のファイルのみの解析の場合の標準出力
                 if self.directory == "":
