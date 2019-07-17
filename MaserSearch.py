@@ -83,11 +83,15 @@ class SpectrumSearcher:
                 for j in tmp3:
                     tmp4 = []
                     if j * self.width + self.width2 <= len(self.y):
-                        for k in range(j * self.width - self.width2, j * self.width + self.width2):
-                            tmp4.append(self.y[k])
-                            # range_list.append(k)
+                        if self.width2 != 0:
+                            for k in range(j * self.width - self.width2, j * self.width + self.width2):
+                                tmp4.append(self.y[k])
+                                # range_list.append(k)
+                            peak_val = max(tmp4)
+                        else:
+                            peak_val = self.y[j * self.width]
 
-                        peak_val = max(tmp4)
+                        
                         range_list.append(peak_val)
                         l = tmp4.index(peak_val)
                         m = l + j * self.width - self.width2
