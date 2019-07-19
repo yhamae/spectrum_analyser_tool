@@ -2,6 +2,7 @@ import numpy as np
 import YukiUtil as util
 import traceback
 import codecs
+import datetime
 import sys
 
 class GetSpectrum:
@@ -19,17 +20,20 @@ class GetSpectrum:
 
     def get_data(self):
         try:
+            y = 0
+            m = 0
+            d = 0
             with codecs.open(self.filename, 'r', 'utf-8', 'ignore') as f:
                 line = f.readlines()
 
             for data in line:
                 tmp = data.split()
-                if 'LSCRT9(1) = file create year' in tmp:
-                    year = int(tmp.split("=")[2].strip())
-                if 'LSCRT9(2) = file create month' in tmp:
-                    month = int(tmp.split("=")[2].strip())
-                if 'LSCRT9(3) = file create day' in tmp:
-                    day = int(tmp.split("=")[2].strip())
+                if 'LSCRT9(1) = file create year' in data:
+                    y = int(data.split("=")[2].strip())
+                if 'LSCRT9(2) = file create month' in data:
+                    m = int(data.split("=")[2].strip())
+                if 'LSCRT9(3) = file create day' in data:
+                    d = int(data.split("=")[2].strip())
 
                 if len(tmp) > 1 and tmp[0].isnumeric() and float(tmp[2]) >= self.min:
                     if 'd' in self.mode:
@@ -46,6 +50,10 @@ class GetSpectrum:
                 print("------------------------------")
                 for i in range(0, len(self.channel)):
                     print("Data > " + self.channel[i] + "    " + self.freq[i] +  "    " + self.T[i])
+            if y != 0 and m != 0 and d != 0:
+                self.date = util.datetime2mjd(datetime.datetime(y, m, d, 0, 0, 0))
+            else:
+                self.date = "N/A"
                         
         except FileNotFoundError as e:
             print(self.filename + ": No such file or directory")

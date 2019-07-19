@@ -25,17 +25,21 @@ class MyPlot:
         self.line_width = 0.5
         self.x_label = "LSR[km/s]"
         self.y_label = "T[K]"
+        self.title = ""
+        self.label1 = "Spectrum"
+        self.label2 = "RMS"
+        self.label3 = ""
     def ExpPlot(self):
         
         
         plt.figure(figsize=(int(self.f_size_x), int(self.f_size_y)), dpi=int(self.dpi))
-        plt.hlines(y=self.rms * self.snr, xmin=min(self.x1), xmax=max(self.x1), linewidth = float(self.line_width), label="Threshold")
-        plt.hlines(y=self.rms, xmin=min(self.x1), xmax=max(self.x1), linewidth = float(self.line_width), linestyle='dashed', label="RMS")
-        plt.plot(self.x1, self.y1, linewidth = float(self.line_width), label="Spectrum")
+        plt.hlines(y=self.rms * self.snr, xmin=min(self.x1), xmax=max(self.x1), linewidth = float(self.line_width), label=self.label3, edgecolors='g')
+        plt.hlines(y=self.rms, xmin=min(self.x1), xmax=max(self.x1), linewidth = float(self.line_width), linestyle='dashed', label=self.label2, edgecolors='g')
+        plt.plot(self.x1, self.y1, linewidth = float(self.line_width), label=self.label1)
         plt.scatter(self.x2, self.y2, facecolors='none', edgecolors='r', linewidth = 0.5, s=100.0)
         plt.scatter(self.x2, self.y2, facecolors='none', edgecolors='r', linewidth = 1, s=1, marker = '.')
         # plt.rcParams['font.family'] ='Helvetica-Light'
-        plt.title(os.path.splitext(self.fname)[0])
+        plt.title(self.title)
         # plt.subplots_adjust(1,1)
         plt.legend()
         plt.xlabel(self.x_label)

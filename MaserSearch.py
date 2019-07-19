@@ -93,7 +93,8 @@ class SpectrumSearcher:
 
                         
                         range_list.append(peak_val)
-                        l = tmp4.index(peak_val)
+                        if self.width2 != 0: l = tmp4.index(peak_val)
+                        else: l = 0
                         m = l + j * self.width - self.width2
                         # print(m, self.x[m], self.y[m - 1], self.y[m], self.y[m + 1], self.y[m + 2])
                         if self.y[m] - self.y[m - 1] > 0 and self.y[m + 1] - self.y[m] < 0:

@@ -150,7 +150,7 @@ class PeakSearch:
                 maser.y = T
                 maser.z = T
                 maser.peak = []
-                maser.snr = self.snr
+                maser.snr = self.snr * 1.5
                 maser.width = self.width
                 maser.mode = self.mode
                 maser.iteration = self.iteration
@@ -162,11 +162,18 @@ class PeakSearch:
 
                 self.remove_width = 10
 
-                for j in range(0, len(channel), self.remove_width * self.width2):
+                if self.width2 == 0:
+                    local_width = 1
+                else:
+                    local_width = self.width2
+
+                maser.snr = self.snr
+
+                for j in range(0, len(channel), self.remove_width * local_width):
                     count = 0
                     tmp = []
                     # tmp2 = []
-                    for k in range(j, j + self.remove_width * self.width2):
+                    for k in range(j, j + self.remove_width * local_width):
                         if k == len(channel): break
                         tmp.append(T[k])
                         # tmp2.append(freq[k])
@@ -224,13 +231,13 @@ class PeakSearch:
                 if not self.outfile == "":
                     # 書き出し
                     exp_header  = "Rawfile name     = " + self.filelist[i] + "\n"
-                    exp_header += "date             = " + nrodata.date + "\n" 
+                    exp_header += "date             = " + str(nrodata.date) + "\n" 
                     exp_header += "Number of peak   = " + str(len(maser.peak)) + "\n" 
                     exp_header += "smoothing width  = " + str(self.width) + "\n" 
                     exp_header += "SNR              = " + str(self.snr) + "\n" 
-                    exp_header += "Output File name = " + self.outfile + "\n" 
+                    exp_header += "Output File name = " + self.outflist[i] + "\n" 
                     exp_header += "rms (by MADFM)   = " + str(MADFM) + "\n" 
-                    exp_header += "self.filelist[i]ut command    = $ Python3 " + ' '.join(self.args) + "\n" 
+                    exp_header += "command          = $ Python3 " + ' '.join(self.args) + "\n" 
                     exp_header += "\nchannel    freq    val    snr"    # ヘッダー情報
                     YukiUtil.export_data(self.outflist[i], exp_header, peak_channel, peak_freq, peak_T, peak_snr)
 
@@ -254,6 +261,9 @@ class PeakSearch:
                     plotpeak.y2 = peak_T
                     plotpeak.rms = MADFM
                     plotpeak.snr = self.snr
+                    plotpeak.label2 = "RMS" + "(" + "σ=" + str(MADFM)[0:7] + ")"
+                    plotpeak.label3 = str(self.snr) + "σ"
+                    plotpeak.title = os.path.splitext(self.filelist[i])[0]
                     self.result.append(plotpeak.ExpPlot())
 
 
