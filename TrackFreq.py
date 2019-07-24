@@ -54,6 +54,7 @@ class TrackingFrequently:
         self.debag = False
         self.flist - []
         self.peak_date = []
+        self.data = []
 
     def get_parameter_by_args(self):
         pass:
@@ -75,7 +76,14 @@ class TrackingFrequently:
             self.peak_date.append()
 
 
+            for i in range()
+            self.data.append()
+
+
         ftp = plot.MyPlot()
+
+    def analysis_peak(self):
+        sort()
         
 
 
