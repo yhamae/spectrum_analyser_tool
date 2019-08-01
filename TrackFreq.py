@@ -55,6 +55,7 @@ class TrackingFrequently:
         self.flist - []
         self.peak_date = []
         self.data = []
+        self.data_index = {}
 
     def get_parameter_by_args(self):
         pass:
@@ -68,18 +69,17 @@ class TrackingFrequently:
         gp.header_num = 7
 
         for file in self.flist:
+            tmp = len(self.data)
             gp.filename = file
             gp.get_peak()
             self.peak_freq.append(gp.peak_freq)
             self.peak_val.append(gp.peak_val)
-            
-            self.peak_date.append()
+            self.data = 
 
+            self.data_index[gp.date] = [tmp, len(self.data)]
 
-            for i in range()
-            self.data.append()
-
-
+            # for freq, val in zip(gp.peak_freq, gp.peak_val)
+            #     self.data.append(freq, val)
         ftp = plot.MyPlot()
 
     def analysis_peak(self):
