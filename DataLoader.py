@@ -83,12 +83,12 @@ class GetPeak:
                 line = f.readlines()
             for tmp in line:
                 if 'date' in tmp:
-                    self.date = tmp.split("=")[1]
+                    self.date = tmp.split("=")[1].strip('\n')
                     break
             for i in range(self.header_num, len(line)):
                 tmp = line[i].split()
-                self.peak_freq.append(tmp[2])
-                self.peak_val.append(tmp[3])
+                self.peak_freq.append(tmp[1])
+                self.peak_val.append(tmp[2])
                 if 's' in self.mode:
                     util.chkprint(tmp[2], tmp[3])
             return True
@@ -98,7 +98,7 @@ class GetPeak:
 if __name__ == "__main__":
     p = GetPeak()
     p.fname = sys.argv[1]
-    p.header_num = 9
+    p.header_num = 10
     p.get_peak()
     util.chkprint2("freq", p.peak_freq)
     util.chkprint2("val", p.peak_val)

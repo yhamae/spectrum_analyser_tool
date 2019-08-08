@@ -18,7 +18,7 @@ class MyPlot:
         self.y2 = 0
         self.rms = 0
         self.snr = 0
-        self.fname = ""
+        self.fname = "out.eps"
         self.f_size_x = 16
         self.f_size_y = 9
         self.dpi = 300
@@ -55,8 +55,8 @@ class MyPlot:
 
 
     def freq_tracking_plot(self):
-        plt.figure(figsize=(int(self.f_size_x), int(self.f_size_y)), dpi=int(self.dpi))
-        plt.plot(self.x1, self.y1, linewidth = float(self.line_width))
+        plt.figure(figsize=(int(self.f_size_x), int(self.f_size_y)), dpi=int(500))
+        plt.scatter(self.x1, self.y1, marker = 'x')
         plt.title(os.path.splitext(self.fname)[0])
         plt.xlabel(self.x_label)
         plt.ylabel(self.y_label)
