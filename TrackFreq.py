@@ -34,6 +34,7 @@ class TrackingFrequently:
         self.rawdata = []
         self.raw_freq = []
         self.raw_val = []
+        self.time = []
 
 
     # def get_parameter_by_args(self):
@@ -82,9 +83,9 @@ class TrackingFrequently:
         tmp_val = []
         try:
             for i in range(0, len(self.rawdata)):
-                tmp_date.append(self.rawdata[i][0])
-                tmp_freq.append(self.rawdata[i][1])
-                tmp_val.append(self.rawdata[i][2])
+                self.time.append(self.rawdata[i][0])
+                self.raw_freq.append(self.rawdata[i][1])
+                self.raw_val.append(self.rawdata[i][2])
         except IndexError as e:
             print(e)
             exit()
@@ -95,7 +96,7 @@ class TrackingFrequently:
         header = "source = " + self.source + "\n"
         header += "\nMJD    Freq    Val"
 
-        ut.export_data("out.txt", header, tmp_date, tmp_freq, tmp_val)
+        ut.export_data("out.txt", header, self.time, self.raw_freq, self.raw_val)
         # ut.export_data("out.txt", self.data[0], self.data[1], self.data[2])
         pl = plot.MyPlot()
         pl.x1 = tmp_date
@@ -104,8 +105,6 @@ class TrackingFrequently:
 
     # def spectrum_cal(self):
     #     max_val = 
-
-
 
 
     def analysis_peak(self):
