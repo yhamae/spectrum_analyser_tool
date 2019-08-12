@@ -59,15 +59,16 @@ class TrackingFrequently:
             if self.debag:
                 ut.chkprint(file)
 
+
             gp.get_peak()
-            self.date = gp.date
-            self.raw_freq = gp.peak_freq
-            self.raw_val = gp.peak_val
+            tmp_date = gp.date
+            tmp_freq = gp.peak_freq
+            tmp_val = gp.peak_val
 
-            for freq, val in zip(self.raw_freq, self.raw_val):
-                self.rawdata.append([self.date, freq, val])
+            for freq, val in zip(tmp_freq, tmp_val):
+                self.rawdata.append([tmp_date, freq, val])
 
-            self.data_index[self.date] = [start_index, len(self.rawdata) - 1]
+            self.data_index[tmp_date] = [start_index, len(self.rawdata) - 1]
 
             # spectrum_cal()
 
@@ -86,6 +87,7 @@ class TrackingFrequently:
                 self.time.append(self.rawdata[i][0])
                 self.raw_freq.append(self.rawdata[i][1])
                 self.raw_val.append(self.rawdata[i][2])
+            # ut.chkprint(i)
         except IndexError as e:
             print(e)
             exit()
@@ -98,11 +100,18 @@ class TrackingFrequently:
 
         ut.export_data("out.txt", header, self.time, self.raw_freq, self.raw_val)
         # ut.export_data("out.txt", self.data[0], self.data[1], self.data[2])
+        print(len(self.time))
+        print(len(self.raw_freq))
         pl = plot.MyPlot()
-        pl.x1 = tmp_date
-        pl.y1 = tmp_freq
+        pl.y1 = self.time
+        pl.x1 = self.raw_freq
+        pl.x_label = "LSR"
+        pl.y_label = "MJD"
         pl.freq_tracking_plot()
 
+
+
+        return True
     # def spectrum_cal(self):
     #     max_val = 
 

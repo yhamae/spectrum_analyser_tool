@@ -55,11 +55,12 @@ class MyPlot:
 
 
     def freq_tracking_plot(self):
-        plt.figure(figsize=(int(self.f_size_x), int(self.f_size_y)), dpi=int(500))
-        plt.scatter(self.x1, self.y1, marker = 'x')
+        # plt.figure(figsize=(int(self.f_size_x), int(self.f_size_y)), dpi=int(500))
+        plt.scatter(self.x1, self.y1)
         plt.title(os.path.splitext(self.fname)[0])
         plt.xlabel(self.x_label)
         plt.ylabel(self.y_label)
+        plt.legend()
         plt.savefig(self.fname, bbox_inches = 'tight')
         plt.close()
         return True
