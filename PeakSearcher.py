@@ -44,6 +44,7 @@ class PeakSearch:
         self.filelist = []
         self.outflist = []
         self.directory = ""
+        self.debag = False
 
     def get_parameter_by_args(self):
         try:
@@ -59,12 +60,7 @@ class PeakSearch:
             self.width2 = int(YukiUtil.option_index(self.args, '-ws', self.width2))
             self.plotname = YukiUtil.option_index(self.args, '-p')
             self.directory = YukiUtil.option_index(self.args, '-a') # 指定したディレクトリ内のすべてのファイルに対して実行
-            if '-d'  in self.args: self.mode += "d"   # -d: デバッグモード
-            if '-sc' in self.args: self.mode += "c"   # -sc: ステータスコードの表示
-            if '-prm'  in self.args: self.mode += "p"   # -p: パラメーター表示
-            if '-da' in self.args: self.mode += "s"   # -da: 読み込んだデータの表示  
-            if '-r'  in self.args: self.mode += "r"   # -r: 計算結果の表示
-            if '-b'  in self.args: self.mode += "b"   # -b: smoothing dataの書きだし
+            if '-d'  in self.args: self.debag = True   # -d: デバッグモード
         except IndexError as e:    # オプションの引数が存在しない場合
             print(self.err_message)
             print(self.usage)
@@ -82,23 +78,19 @@ class PeakSearch:
                     self.outflist.append(self.outfile + os.path.splitext(self.filelist[i])[0] + '.txt')
 
         else : # -aオプションを使う場合
-            # self.filelist = []
-            # self.outflist = []
             self.filelist.append(self.filename)
             if not self.outfile == "":
                 self.outflist.append(self.outfile)
+
+        return True
 
     def find_peak(self):
         #################
         # Main Function #
         #################
         if not self.plotname == "": # -pオプションを使う場合
-            try:
-                import plot
-            except ImportError as e:
-                print("\"plot.py\" is not found")
-                DLFile("https://raw.githubusercontent.com/yhamae/spectrum_analyser_tool/master/plot.py")
-                import plot
+            import plot
+            
 
         if imp_tqdm: # tqdmモジュールが入っているかどうか
             bar = tqdm(range(0, len(self.filelist)))
@@ -125,7 +117,7 @@ class PeakSearch:
                 nrodata.filename = self.directory + self.filelist[i]
                 nrodata.mode = self.mode
 
-                if 'p' in self.mode:
+                if self.debag:
                     YukiUtil.chkprint(nrodata.filename)
 
                 self.result.append(nrodata.get_data())
@@ -137,9 +129,8 @@ class PeakSearch:
 
 
 
-                if 'c' in self.mode:
+                if self.debag:
                     print("------------------------------\n" + "StatusCode >     " + "data() = " + str(self.result[0]))
-                if 'p' in self.mode:
                     print("----- Number of value -----")
                     YukiUtil.chklprint(channel, freq, T)
 
@@ -179,13 +170,10 @@ class PeakSearch:
                         # tmp2.append(freq[k])
                         
                         if k + 1 in maser.peak:
-                            # print(k)
                             count += 1
                     if count == 0:
                         maser.z.extend(tmp)
-                        # xval.extend(tmp2)
-                # print(maser.z)
-                # YukiUtil.chklprint(maser.z)
+
 
                 maser.peak = []
                 self.result.append(maser.find())
@@ -195,7 +183,7 @@ class PeakSearch:
                     MADFM = YukiUtil.madfm(maser.z)
                 except statistics.StatisticsError as e: # Tに値が入っていない場合
                     print(e)
-                    if 'c' in self.mode:
+                    if self.debag:
                         print("\n>>> " + str(e))
                         traceback.print_exc()
                         print("\n")
@@ -225,7 +213,7 @@ class PeakSearch:
                         print("#########################")
 
                 # 複数ファイルを解析するときの標準出力
-                elif 'c' in self.mode:
+                elif self.debag:
                     print(">>>    " + "find " + str(len(maser.peak)) + " peaks in " + self.filelist[i])
 
                 if not self.outfile == "":
@@ -242,7 +230,7 @@ class PeakSearch:
                     YukiUtil.export_data(self.outflist[i], exp_header, peak_channel, peak_freq, peak_T, peak_snr)
 
 
-                if 'c' in self.mode:
+                if self.debag:
                     print("------------------------------\n" + "status code >    " + "SpectrumSearcher(): " + str(self.result[1]))
 
                 if not self.plotname == "":
@@ -269,7 +257,7 @@ class PeakSearch:
 
 
             except ValueError as e:
-                if 'c' in self.mode:
+                if self.debag:
                     print(">>>can not find peaks for Err\n>>> " + str(e))
                     traceback.print_exc()
                 # エラーが起こったこととそのとき読み込んだファイルを記録
@@ -281,18 +269,10 @@ class PeakSearch:
 
         for status in self.result:
             if not status:
-                print("--------------------------------")
-                print("Program has incorrectly finished")
-                print(str(len(self.Errfilelist)) + " Error found")
-                print("--------------------------------")
-                print("<<< Err files is bellow >>>")
-                print("- ", end = "")
-                print('\n- '.join(self.Errfilelist))
-                exit()
+                return False
 
-        print("------------------------------")
-        print("Program has correctly finished")
-        print("------------------------------")
+        
+        return True
 
 
 
@@ -301,11 +281,15 @@ if __name__ == "__main__":
     p = PeakSearch()
     p.args = sys.argv
     p.get_parameter_by_args()
-    p.find_peak()
-
-    # peak_list = []
-    # main(sys.argv, peak_list)
-
-
-
-    
+    if p.find_peak():
+        print("------------------------------")
+        print("Program has correctly finished")
+        print("------------------------------")
+    else:
+        print("--------------------------------")
+        print("Program has incorrectly finished")
+        print(str(len(p.Errfilelist)) + " Error found")
+        print("--------------------------------")
+        print("<<< Err files is bellow >>>")
+        print("- ", end = "")
+        print('\n- '.join(p.Errfilelist))
