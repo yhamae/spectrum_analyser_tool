@@ -4,10 +4,14 @@ import os
 import traceback
 import subprocess
 import PeakSearcher
+import math
+# from scipy import constants
+import scipy
 
 from tqdm import tqdm
 import YukiUtil as ut
 import PeakSearcher
+import numpy as np
 import DataLoader
 import plot
 
@@ -30,11 +34,14 @@ class TrackingFrequently:
         self.data = []
         self.data_index = {}
         self.header_line = 10
+        self.oname = ""
         
         self.rawdata = []
         self.raw_freq = []
         self.raw_val = []
         self.time = []
+        self.flux = 1.7353787 / 0.61
+        print(scipy.constants.value('Boltzmann constant'))
 
 
     # def get_parameter_by_args(self):
@@ -66,7 +73,7 @@ class TrackingFrequently:
             tmp_val = gp.peak_val
 
             for freq, val in zip(tmp_freq, tmp_val):
-                self.rawdata.append([tmp_date, freq, val])
+                self.rawdata.append([float(tmp_date), float(freq), float(val) * self.flux])
 
             self.data_index[tmp_date] = [start_index, len(self.rawdata) - 1]
 
@@ -84,9 +91,10 @@ class TrackingFrequently:
         tmp_val = []
         try:
             for i in range(0, len(self.rawdata)):
-                self.time.append(self.rawdata[i][0])
-                self.raw_freq.append(self.rawdata[i][1])
-                self.raw_val.append(self.rawdata[i][2])
+                self.time.append(float(self.rawdata[i][0]))
+                self.raw_freq.append(float(self.rawdata[i][1]))
+                self.raw_val.append(float(self.rawdata[i][2]))
+                tmp_val.append(math.log10(float(self.rawdata[i][2])))
             # ut.chkprint(i)
         except IndexError as e:
             print(e)
@@ -98,15 +106,18 @@ class TrackingFrequently:
         header = "source = " + self.source + "\n"
         header += "\nMJD    Freq    Val"
 
-        ut.export_data("out.txt", header, self.time, self.raw_freq, self.raw_val)
-        # ut.export_data("out.txt", self.data[0], self.data[1], self.data[2])
-        print(len(self.time))
-        print(len(self.raw_freq))
+        ut.export_data(self.oname, header, self.time, self.raw_freq, self.raw_val)
+
+
         pl = plot.MyPlot()
-        pl.y1 = self.time
-        pl.x1 = self.raw_freq
-        pl.x_label = "LSR"
-        pl.y_label = "MJD"
+        pl.data = np.array(self.rawdata)
+        pl.x1 = self.time
+        pl.y1 = self.raw_freq
+        pl.c = tmp_val
+        pl.y_label = "LSR[km/s]"
+        pl.x_label = "MJD[day]"
+        pl.title = os.path.splitext(self.oname)[0].split('/')[-1]
+        pl.fname = os.path.splitext(self.oname)[0] + ".eps"
         pl.freq_tracking_plot()
 
 
@@ -126,4 +137,5 @@ if __name__ == "__main__":
     tf = TrackingFrequently()
     tf.source = args[1]
     tf.directory = args[2]
+    tf.oname = args[3]
     print(tf.get_peak_data())

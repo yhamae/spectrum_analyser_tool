@@ -2,6 +2,7 @@ import traceback
 import numpy as np
 import os
 import statistics
+import seaborn as sns
 try:
     import matplotlib.pyplot as plt
 except ImportError as e:
@@ -29,6 +30,8 @@ class MyPlot:
         self.label1 = "Spectrum"
         self.label2 = "RMS"
         self.label3 = ""
+        self.data = []
+        self.c = []
     def ExpPlot(self):
         
         
@@ -55,12 +58,21 @@ class MyPlot:
 
 
     def freq_tracking_plot(self):
-        # plt.figure(figsize=(int(self.f_size_x), int(self.f_size_y)), dpi=int(500))
-        plt.scatter(self.x1, self.y1)
+        plt.figure(figsize=(int(self.f_size_x), int(self.f_size_x)), dpi=int(500))
+        # sns.set()
+        # sns.heatmap(self.data, annot=True)
+
+
+        plt.scatter(self.x1, self.y1, c=self.c, cmap='jet', s = 10)
         plt.title(os.path.splitext(self.fname)[0])
         plt.xlabel(self.x_label)
         plt.ylabel(self.y_label)
+        # plt.set_clim(min(self.c), max(self.c))
+        # plt.imshow(self.c)
+        plt.title(self.title)
         plt.legend()
+        plt.colorbar()
+        # plt.show()
         plt.savefig(self.fname, bbox_inches = 'tight')
         plt.close()
         return True
