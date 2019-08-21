@@ -5,8 +5,8 @@ import traceback
 import subprocess
 import PeakSearcher
 import math
-# from scipy import constants
-import scipy
+from scipy import constants
+# import scipy
 
 from tqdm import tqdm
 import YukiUtil as ut
@@ -41,7 +41,7 @@ class TrackingFrequently:
         self.raw_val = []
         self.time = []
         self.flux = 1.7353787 / 0.61
-        print(scipy.constants.value('Boltzmann constant'))
+        print(constants.value('Boltzmann constant') * 1E+26)
 
 
     # def get_parameter_by_args(self):
