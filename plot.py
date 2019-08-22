@@ -70,7 +70,7 @@ class MyPlot:
         # plt.set_clim(min(self.c), max(self.c))
         # plt.imshow(self.c)
         plt.title(self.title)
-        plt.legend()
+        # plt.legend()
         plt.colorbar()
         # plt.show()
         plt.savefig(self.fname, bbox_inches = 'tight')

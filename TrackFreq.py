@@ -6,8 +6,6 @@ import subprocess
 import PeakSearcher
 import math
 from scipy import constants
-# import scipy
-
 from tqdm import tqdm
 import YukiUtil as ut
 import PeakSearcher
@@ -28,20 +26,20 @@ class TrackingFrequently:
         self.peak_freq = []
         self.peak_val = []
         self.args = []
-        self.debag = True
+        self.debag = False
         self.flist = []
         self.peak_date = []
         self.data = []
         self.data_index = {}
         self.header_line = 10
         self.oname = ""
-        
+        self.reciver = "H22"
         self.rawdata = []
         self.raw_freq = []
         self.raw_val = []
         self.time = []
-        self.flux = 1.7353787 / 0.61
-        print(constants.value('Boltzmann constant') * 1E+26)
+        self.r_ant = 45
+        self.aperture_efficiency = {"H22":0.61, "H40":0.55}
 
 
     # def get_parameter_by_args(self):
@@ -54,11 +52,14 @@ class TrackingFrequently:
                 self.flist.append(self.directory + data)
         if self.debag:
             ut.chkprint2("self.flist", self.flist)
+        print(">>> Load Data")
+        print('- ' + '\n- '.join(self.flist))
         gp = DataLoader.GetPeak()
         gp.header_num = self.header_line
 
 
         start_index = 0
+
 
         for file in self.flist:
             gp.fname = file
@@ -73,7 +74,8 @@ class TrackingFrequently:
             tmp_val = gp.peak_val
 
             for freq, val in zip(tmp_freq, tmp_val):
-                self.rawdata.append([float(tmp_date), float(freq), float(val) * self.flux])
+                self.rawdata.append([float(tmp_date), float(freq), float(val) * 2 * constants.value('Boltzmann constant') * 1E+26 / (self.aperture_efficiency[self.reciver] * (self.r_ant / 2) * (self.r_ant / 2) * math.pi)])
+                # 2k_b/A_e
 
             self.data_index[tmp_date] = [start_index, len(self.rawdata) - 1]
 
@@ -138,4 +140,11 @@ if __name__ == "__main__":
     tf.source = args[1]
     tf.directory = args[2]
     tf.oname = args[3]
-    print(tf.get_peak_data())
+    if tf.get_peak_data():
+        print("------------------------------")
+        print("Program has correctly finished")
+        print("------------------------------")
+    else:
+        print("--------------------------------")
+        print("Program has incorrectly finished")
+        print("--------------------------------")
