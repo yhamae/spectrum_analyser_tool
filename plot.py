@@ -58,7 +58,7 @@ class MyPlot:
 
 
     def freq_tracking_plot(self):
-        plt.figure(figsize=(int(self.f_size_x), int(self.f_size_x)), dpi=int(500))
+        plt.figure(figsize=(int(self.f_size_x), int(self.f_size_x)), dpi=int(300))
         # sns.set()
         # sns.heatmap(self.data, annot=True)
 

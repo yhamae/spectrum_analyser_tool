@@ -84,13 +84,17 @@ class GetPeak:
             for tmp in line:
                 if 'date' in tmp:
                     self.date = tmp.split("=")[1].strip('\n')
-                    break
-            for i in range(self.header_num, len(line)):
-                tmp = line[i].split()
-                self.peak_freq.append(tmp[1])
-                self.peak_val.append(tmp[2])
-                if 's' in self.mode:
-                    util.chkprint(tmp[2], tmp[3])
+                if tmp[0] != "#" and tmp[0] != "\n":
+                    self.peak_freq.append(tmp.split()[1])
+                    self.peak_val.append(tmp.split()[2])
+                    
+            # for i in range(0, len(line)):
+            #     if line[i][0] != "#"
+            #         tmp = line[i].split()
+            #         self.peak_freq.append(tmp[1])
+            #         self.peak_val.append(tmp[2])
+                    # if 's' in self.mode:
+                    #     util.chkprint(tmp[2], tmp[3])
             return True
         except FileNotFoundError as e:
             print(self.filename + ": No such file or directory")

@@ -33,12 +33,15 @@ class TrackingFrequently:
         self.data_index = {}
         self.header_line = 10
         self.oname = ""
+        self.source_keywoed = ""
         self.reciver = "H22"
         self.rawdata = []
         self.raw_freq = []
         self.raw_val = []
         self.time = []
         self.r_ant = 45
+        self.plottype = "eps"
+        self.ref_freq = "H2O"
         self.aperture_efficiency = {"H22":0.61, "H40":0.55}
 
 
@@ -48,7 +51,7 @@ class TrackingFrequently:
     def get_peak_data(self):
         tmp_list = os.listdir(self.directory)
         for data in tmp_list:
-            if self.source in data:
+            if self.source_keywoed in data:
                 self.flist.append(self.directory + data)
         if self.debag:
             ut.chkprint2("self.flist", self.flist)
@@ -59,6 +62,11 @@ class TrackingFrequently:
 
 
         start_index = 0
+
+        if "H2O" in self.ref_freq:
+            self.reciver = "H22"
+        if "SiO" in self.ref_freq:
+            self.reciver = "H40"
 
 
         for file in self.flist:
@@ -83,13 +91,14 @@ class TrackingFrequently:
 
             start_index = len(self.rawdata)
 
+            del tmp_date, tmp_freq, tmp_val
+
         # print(self.data[1709][1])
         if self.debag:
             ut.chkprint2("self.data_index", self.data_index)
             # ut.chkprint2("self.data", self.data)
 
-        tmp_date = []
-        tmp_freq = []
+
         tmp_val = []
         try:
             for i in range(0, len(self.rawdata)):
@@ -105,8 +114,11 @@ class TrackingFrequently:
             print(e)
             exit()
 
-        header = "source = " + self.source + "\n"
-        header += "\nMJD    Freq    Val"
+        header = "# source = " + self.source + "\n"
+        header += "# molecule = " + self.ref_freq + "\n"
+        header += "# Receiver = " + self.reciver + "\n"
+        # header += "VakueAverage = " + str(sum(self.raw_val) / len(self.raw_val)) + "\n"
+        header += "\n# MJD    Freq    Val"
 
         ut.export_data(self.oname, header, self.time, self.raw_freq, self.raw_val)
 
@@ -118,8 +130,8 @@ class TrackingFrequently:
         pl.c = tmp_val
         pl.y_label = "LSR[km/s]"
         pl.x_label = "MJD[day]"
-        pl.title = os.path.splitext(self.oname)[0].split('/')[-1]
-        pl.fname = os.path.splitext(self.oname)[0] + ".eps"
+        pl.title = self.source + " " + self.ref_freq
+        pl.fname = os.path.splitext(self.oname)[0] + "." + self.plottype
         pl.freq_tracking_plot()
 
 
@@ -137,14 +149,16 @@ class TrackingFrequently:
 if __name__ == "__main__":
     args = sys.argv
     tf = TrackingFrequently()
-    tf.source = args[1]
-    tf.directory = args[2]
-    tf.oname = args[3]
+    tf.source_keywoed = args[1] + "_" + args[2] + "_"
+    tf.source = args[1]  # 天体名
+    tf.ref_freq = args[2]  # 分子名（H2O,SiOなど）
+    tf.directory = args[3]  # ファイルを検索するディレクトリ
+    tf.oname = args[4]
     if tf.get_peak_data():
-        print("------------------------------")
+        print(ut.pycolor.GREEN + "------------------------------")
         print("Program has correctly finished")
-        print("------------------------------")
+        print("------------------------------" + ut.pycolor.END)
     else:
-        print("--------------------------------")
+        print(ut.pycolor.RED + "--------------------------------")
         print("Program has incorrectly finished")
-        print("--------------------------------")
+        print("--------------------------------" + ut.pycolor.END)
