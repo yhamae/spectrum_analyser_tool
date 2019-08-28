@@ -1,11 +1,13 @@
+#! /usr/local/bin/Python3
 import sys
 import codecs
-import numpy as np
 import statistics
 import math
 import traceback
 import inspect
 import datetime
+
+import numpy as np
 
 class pycolor:
     BLACK = '\033[30m'

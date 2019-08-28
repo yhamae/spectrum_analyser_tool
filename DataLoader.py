@@ -1,9 +1,14 @@
-import numpy as np
-import Util as util
-import traceback
+#! /usr/local/bin/Python3
 import codecs
 import datetime
 import sys
+import traceback
+
+import numpy as np
+
+import Util as util
+
+
 
 class GetSpectrum:
     def __init__(self):

@@ -1,14 +1,12 @@
+#! /usr/local/bin/Python3
 import traceback
-import numpy as np
 import os
 import statistics
-import seaborn as sns
-try:
-    import matplotlib.pyplot as plt
-except ImportError as e:
-    print(">>>    Not Found \"matplotlib\" in your computer")
-    print(">>>    Please Enter Command: pip install matplotlib")
-    exit()
+
+import numpy as np
+# import seaborn as sns
+import matplotlib.pyplot as plt
+
 
 
 class MyPlot:

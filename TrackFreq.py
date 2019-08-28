@@ -3,15 +3,16 @@ import sys
 import os
 import traceback
 import subprocess
-import PeakSearcher
 import math
+
 from scipy import constants
 from tqdm import tqdm
-import Util as ut
-import PeakSearcher
 import numpy as np
-import DataLoader
 import matplotlib.pyplot as plt
+
+import PeakSearcher
+import Util as ut
+import DataLoader
 import plot
 
 

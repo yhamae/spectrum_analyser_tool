@@ -1,7 +1,11 @@
-import numpy as np
-import Util
+#! /usr/local/bin/Python3
 import traceback
 import statistics
+
+import numpy as np
+
+import Util
+
 
 
 class SpectrumSearcher:
