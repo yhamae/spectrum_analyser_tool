@@ -1,5 +1,5 @@
 import numpy as np
-import YukiUtil
+import Util
 import traceback
 import statistics
 
@@ -38,17 +38,17 @@ class SpectrumSearcher:
                         y2.append(tmp)
                     # ↓後で消す
                     if 'b' in self.mode:
-                        YukiUtil.export_data("smoothiong_data.txt", "channel    val", x2, y2)
+                        Util.export_data("smoothiong_data.txt", "channel    val", x2, y2)
                     # ↑後で消す
                 else:
                     x2 = self.x
                     y2 = self.y
 
-                MADFM = YukiUtil.madfm([float(s * self.width) for s in self.z])
+                MADFM = Util.madfm([float(s * self.width) for s in self.z])
 
                 if 'r' in self.mode:
                     print("------------------------------")
-                    YukiUtil.chkprint(MADFM)
+                    Util.chkprint(MADFM)
 
                 # 輝線の山の部分を検索
                 # for j in range(1, len(y2) - 1):
@@ -61,7 +61,7 @@ class SpectrumSearcher:
 
                 if 'r' in self.mode:
                     print("------------------------------")
-                    YukiUtil.chklprint(tmp2)
+                    Util.chklprint(tmp2)
                     # print(tmp2)
 
                 count = 0

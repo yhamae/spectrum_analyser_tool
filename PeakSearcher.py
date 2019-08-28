@@ -4,7 +4,7 @@ import os
 import traceback
 import subprocess
 import statistics
-import YukiUtil
+import Util
 import MaserSearch
 import DataLoader
 
@@ -52,14 +52,14 @@ class PeakSearch:
             if '-h'  in self.args:    # 使い方を表示
                 print(self.usage)
                 exit()
-            self.filename = YukiUtil.option_index(self.args, '-fname', self.filename)
-            self.snr = float(YukiUtil.option_index(self.args, '-s', self.snr))
-            self.width = int(YukiUtil.option_index(self.args, '-w', self.width))
-            self.outfile = YukiUtil.option_index(self.args, '-o', self.outfile)
-            self.iteration = int(YukiUtil.option_index(self.args, '-i', self.iteration))
-            self.width2 = int(YukiUtil.option_index(self.args, '-ws', self.width2))
-            self.plotname = YukiUtil.option_index(self.args, '-p')
-            self.directory = YukiUtil.option_index(self.args, '-a') # 指定したディレクトリ内のすべてのファイルに対して実行
+            self.filename = Util.option_index(self.args, '-fname', self.filename)
+            self.snr = float(Util.option_index(self.args, '-s', self.snr))
+            self.width = int(Util.option_index(self.args, '-w', self.width))
+            self.outfile = Util.option_index(self.args, '-o', self.outfile)
+            self.iteration = int(Util.option_index(self.args, '-i', self.iteration))
+            self.width2 = int(Util.option_index(self.args, '-ws', self.width2))
+            self.plotname = Util.option_index(self.args, '-p')
+            self.directory = Util.option_index(self.args, '-a') # 指定したディレクトリ内のすべてのファイルに対して実行
             if '-d'  in self.args: self.debag = True   # -d: デバッグモード
         except IndexError as e:    # オプションの引数が存在しない場合
             print(self.err_message)
@@ -118,7 +118,7 @@ class PeakSearch:
                 nrodata.mode = self.mode
 
                 if self.debag:
-                    YukiUtil.chkprint(nrodata.filename)
+                    Util.chkprint(nrodata.filename)
 
                 self.result.append(nrodata.get_data())
 
@@ -132,7 +132,7 @@ class PeakSearch:
                 if self.debag:
                     print("------------------------------\n" + "StatusCode >     " + "data() = " + str(self.result[0]))
                     print("----- Number of value -----")
-                    YukiUtil.chklprint(channel, freq, T)
+                    Util.chklprint(channel, freq, T)
 
 
                 # 輝線の捜索
@@ -180,7 +180,7 @@ class PeakSearch:
                 self.peak_list = maser.peak
 
                 try:
-                    MADFM = YukiUtil.madfm(maser.z)
+                    MADFM = Util.madfm(maser.z)
                 except statistics.StatisticsError as e: # Tに値が入っていない場合
                     print(e)
                     if self.debag:
@@ -236,7 +236,7 @@ class PeakSearch:
                     exp_header += "# Peak Median      = " + tmp_med + "\n"
                     exp_header += "# command          = $ Python3 " + ' '.join(self.args) + "\n" 
                     exp_header += "\n# channel    freq    val    snr"    # ヘッダー情報
-                    YukiUtil.export_data(self.outflist[i], exp_header, peak_channel, peak_freq, peak_T, peak_snr)
+                    Util.export_data(self.outflist[i], exp_header, peak_channel, peak_freq, peak_T, peak_snr)
 
 
                 if self.debag:
