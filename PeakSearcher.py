@@ -103,6 +103,7 @@ class PeakSearch:
                 continue
             try:
 
+
                 lresult = len(self.result)
                 peak_channel = []
                 peak_freq = []
@@ -122,6 +123,11 @@ class PeakSearch:
                     Util.chkprint(nrodata.filename)
 
                 self.result.append(nrodata.get_data())
+
+                # --------------------ここから--------------------
+
+
+
 
                 # str型をfloat型に変換
                 channel = [int(s) for s in nrodata.channel]
@@ -269,6 +275,9 @@ class PeakSearch:
                 peak_freq = []
                 peak_T = []
                 peak_snr = []
+
+                # --------------------ここまで--------------------
+                # 別のメソッドにする
 
 
 
