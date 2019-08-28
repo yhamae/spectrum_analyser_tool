@@ -44,7 +44,7 @@ class TrackingFrequently:
         self.raw_val = []
         self.time = []
         self.thresholds_x = 5
-        self.thresholds_y = 0.5
+        self.thresholds_y = 2
         self.a_x = []
         self.r_ant = 45
         self.plottype = "eps"
@@ -64,8 +64,8 @@ class TrackingFrequently:
             ut.chkprint2("self.flist", self.flist)
         print(">>> Load Data")
         print('- ' + '\n- '.join(self.flist))
-        gp = DataLoader.GetPeak()
-        gp.header_num = self.header_line
+        
+
 
 
         start_index = 0
@@ -74,9 +74,11 @@ class TrackingFrequently:
             self.reciver = "H22"
         if "SiO" in self.ref_freq:
             self.reciver = "H40"
+        # ut.chkprint(self.flist)
 
 
         for file in self.flist:
+            gp = DataLoader.GetPeak()
             gp.fname = file
 
             if self.debag:
@@ -97,6 +99,8 @@ class TrackingFrequently:
             # spectrum_cal()
 
             start_index = len(self.rawdata)
+
+            
 
             del tmp_date, tmp_freq, tmp_val
 
@@ -144,25 +148,20 @@ class TrackingFrequently:
 
 
         return True
-    # def spectrum_cal(self):
-    #     max_val = 
 
-    # def onclick(event):
-    #     print 'event.button=%d,  event.x=%d, event.y=%d, event.xdata=%f, \
-    #     event.ydata=%f'%(event.button, event.x, event.y, event.xdata, event.ydata)
 
     def get_click_point(self):
         # try:
         plt.scatter(self.x, self.y, c=self.c, cmap='jet')
+        plt.colorbar()
 
-        a = plt.ginput(n=-1, mouse_add=1, mouse_pop=2, mouse_stop=3)
+        a = plt.ginput(n=-1, mouse_add=1, mouse_pop=2, mouse_stop=3, timeout = 600)
         # n=-1でインプットが終わるまで座標を取得
         # mouse_addで座標を取得（左クリック）
         # mouse_popでUndo（右クリック）
         # mouse_stopでインプットを終了する（ミドルクリック）
         # print("click coordinate is berrow")
         for c, d in a:
-            # print("(" + str(c) + ", " + str(d) + ")")
             tmp = []
             count = 0
             for tmp_x, tmp_y, tmp_c in zip(self.time, self.raw_freq, self.raw_val):
@@ -174,23 +173,22 @@ class TrackingFrequently:
                     
             if len(tmp) == 1:
                 self.a.append(tmp[0][0:3])
-                plt.scatter(tmp[0][1], tmp[0][2], facecolors='k', edgecolors='k')
+                plt.scatter(tmp[0][0], tmp[0][1], c = 'black')
             elif count == 0:
                 continue
             else:
                 tmp_val = [tmp[i][3] for i in range(0, len(tmp))]
                 j = tmp_val.index(min(tmp_val))
                 self.a.append(tmp[j][0:3])
-                plt.scatter(tmp[j][1], tmp[j][2], facecolors='k', edgecolors='k')
+                plt.scatter(tmp[j][0], tmp[j][1], c = 'black')
             del tmp
-
 
         # plt.savefig('fig_test.png')
         plt.show()
         print(self.a)
-    #     pass:
-        # except:
-        #     print("err")
+
+        return True
+
 
     def analysis_peak(self):
         self.x = self.time
@@ -223,15 +221,16 @@ class TrackingFrequently:
 
 
 if __name__ == "__main__":
+    # Usage: Python3 TrackFreq.py 天体名 分子名(H2O, SiOなど) テキストファイルを検索するディレクトリ 書き出すテキストファイルの名前 モード選択("-a"をつけると周波数方向の変化が図れる。付かないと計算しない)
     args = sys.argv
     tf = TrackingFrequently()
     tf.source_keywoed = args[1] + "_" + args[2] + "_"
     tf.source = args[1]  # 天体名
     tf.ref_freq = args[2]  # 分子名（H2O,SiOなど）
     tf.directory = args[3]  # ファイルを検索するディレクトリ
-    tf.oname = args[4]
+    tf.oname = args[4]  # 書き出すテキストファイルの名前
     result1 = tf.get_peak_data()
-    if "-a" in args:
+    if "-a" in args:  # 最後に-aをつけると計算モード
         result2 = tf.analysis_peak()
     else:
         result2 = True

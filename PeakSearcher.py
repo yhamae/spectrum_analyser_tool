@@ -263,6 +263,12 @@ class PeakSearch:
                     plotpeak.title = os.path.splitext(self.filelist[i])[0]
                     self.result.append(plotpeak.ExpPlot())
 
+                # 初期化    
+                peak_channel = []
+                peak_freq = []
+                peak_T = []
+                peak_snr = []
+
 
 
             except ValueError as e:
