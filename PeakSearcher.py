@@ -3,7 +3,7 @@ import sys
 import os
 import traceback
 import subprocess
-
+import statistics
 import YukiUtil
 import MaserSearch
 import DataLoader
@@ -218,6 +218,13 @@ class PeakSearch:
 
                 if not self.outfile == "":
                     # 書き出し
+                    try:
+                        if len(peak_T) != 0:
+                            tmp_ave = str(sum(peak_T) / len(peak_T))
+                        tmp_med = str(statistics.median(peak_T))
+                    except:
+                        tmp_ave = "N/A"
+                        tmp_med = "N/A"
                     exp_header  = "# Rawfile name     = " + self.filelist[i] + "\n"
                     exp_header += "# date             = " + str(nrodata.date) + "\n" 
                     exp_header += "# Number of peak   = " + str(len(maser.peak)) + "\n" 
@@ -225,6 +232,8 @@ class PeakSearch:
                     exp_header += "# SNR              = " + str(self.snr) + "\n" 
                     exp_header += "# Output File name = " + self.outflist[i] + "\n" 
                     exp_header += "# rms (by MADFM)   = " + str(MADFM) + "\n" 
+                    exp_header += "# Peak Average     = " + tmp_ave + "\n" 
+                    exp_header += "# Peak Median      = " + tmp_med + "\n"
                     exp_header += "# command          = $ Python3 " + ' '.join(self.args) + "\n" 
                     exp_header += "\n# channel    freq    val    snr"    # ヘッダー情報
                     YukiUtil.export_data(self.outflist[i], exp_header, peak_channel, peak_freq, peak_T, peak_snr)

@@ -11,6 +11,7 @@ import YukiUtil as ut
 import PeakSearcher
 import numpy as np
 import DataLoader
+import matplotlib.pyplot as plt
 import plot
 
 
@@ -23,6 +24,9 @@ class TrackingFrequently:
         self.array = []
         self.x = []
         self.y = []
+        self.a = []
+        self.b = []
+        self.c = []
         self.peak_freq = []
         self.peak_val = []
         self.args = []
@@ -39,6 +43,9 @@ class TrackingFrequently:
         self.raw_freq = []
         self.raw_val = []
         self.time = []
+        self.thresholds_x = 5
+        self.thresholds_y = 0.5
+        self.a_x = []
         self.r_ant = 45
         self.plottype = "eps"
         self.ref_freq = "H2O"
@@ -140,9 +147,78 @@ class TrackingFrequently:
     # def spectrum_cal(self):
     #     max_val = 
 
+    # def onclick(event):
+    #     print 'event.button=%d,  event.x=%d, event.y=%d, event.xdata=%f, \
+    #     event.ydata=%f'%(event.button, event.x, event.y, event.xdata, event.ydata)
+
+    def get_click_point(self):
+        # try:
+        plt.scatter(self.x, self.y, c=self.c, cmap='jet')
+
+        a = plt.ginput(n=-1, mouse_add=1, mouse_pop=2, mouse_stop=3)
+        # n=-1でインプットが終わるまで座標を取得
+        # mouse_addで座標を取得（左クリック）
+        # mouse_popでUndo（右クリック）
+        # mouse_stopでインプットを終了する（ミドルクリック）
+        # print("click coordinate is berrow")
+        for c, d in a:
+            # print("(" + str(c) + ", " + str(d) + ")")
+            tmp = []
+            count = 0
+            for tmp_x, tmp_y, tmp_c in zip(self.time, self.raw_freq, self.raw_val):
+                if math.fabs(c - tmp_x) <= self.thresholds_x and math.fabs(d - tmp_y) <= self.thresholds_y:
+                    dr = (c - tmp_x) * (c - tmp_x) + (d - tmp_y) * (d - tmp_y)
+                    tmp.append([tmp_x, tmp_y, tmp_c, dr])
+                    count += 1
+                    # break
+                    
+            if len(tmp) == 1:
+                self.a.append(tmp[0][0:3])
+                plt.scatter(tmp[0][1], tmp[0][2], facecolors='k', edgecolors='k')
+            elif count == 0:
+                continue
+            else:
+                tmp_val = [tmp[i][3] for i in range(0, len(tmp))]
+                j = tmp_val.index(min(tmp_val))
+                self.a.append(tmp[j][0:3])
+                plt.scatter(tmp[j][1], tmp[j][2], facecolors='k', edgecolors='k')
+            del tmp
+
+
+        # plt.savefig('fig_test.png')
+        plt.show()
+        print(self.a)
+    #     pass:
+        # except:
+        #     print("err")
 
     def analysis_peak(self):
-        sort()
+        self.x = self.time
+        self.y = self.raw_freq
+        self.c = [math.log10(s) for s in self.raw_val]
+        TrackingFrequently.get_click_point(self)
+        # print(self.a)
+        # print(self.a[0])
+        # print(self.a[1])
+        tmp_x = [self.a[i][0] for i in range(0, len(self.a))]
+        tmp_y = [self.a[i][1] for i in range(0, len(self.a))]
+        tmp_c = [math.log10(self.a[i][2]) for i in range(0, len(self.a))]
+        tmp_f = []
+        plt.scatter(tmp_x, tmp_y, c = tmp_c, cmap='jet')
+        print("近似曲線")
+        for i in range(0, 3):
+            self.a_x.append(np.polyfit(tmp_x, tmp_y, i + 1))
+            tmp_f.append(np.poly1d(self.a_x[i])(tmp_x))
+            print(np.poly1d(self.a_x[i]))
+            tmp_label =str(np.poly1d(self.a_x[i]))
+            plt.plot(tmp_x, tmp_f[i], label=tmp_label)
+        plt.legend()
+        plt.colorbar()
+        plt.show()
+
+
+        return True
+    
         
 
 
@@ -154,7 +230,12 @@ if __name__ == "__main__":
     tf.ref_freq = args[2]  # 分子名（H2O,SiOなど）
     tf.directory = args[3]  # ファイルを検索するディレクトリ
     tf.oname = args[4]
-    if tf.get_peak_data():
+    result1 = tf.get_peak_data()
+    if "-a" in args:
+        result2 = tf.analysis_peak()
+    else:
+        result2 = True
+    if result1 and result2:
         print(ut.pycolor.GREEN + "------------------------------")
         print("Program has correctly finished")
         print("------------------------------" + ut.pycolor.END)
