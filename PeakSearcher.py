@@ -234,7 +234,8 @@ class PeakSearch:
                         tmp_med = "N/A"
                     exp_header  = "# Rawfile name     = " + self.filelist[i] + "\n"
                     exp_header += "# date             = " + str(nrodata.date) + "\n" 
-                    exp_header += "# MJD             = " + str(nrodata.MJD) + "\n" 
+                    exp_header += "# MJD              = " + str(nrodata.MJD) + "\n" 
+                    exp_header += "# object name      = " + nrodata.object_name + "\n" 
                     exp_header += "# Number of peak   = " + str(len(maser.peak)) + "\n" 
                     exp_header += "# smoothing width  = " + str(self.width) + "\n" 
                     exp_header += "# SNR              = " + str(self.snr) + "\n" 
@@ -244,7 +245,20 @@ class PeakSearch:
                     exp_header += "# Peak Median      = " + tmp_med + "\n"
                     exp_header += "# command          = $ Python3 " + ' '.join(self.args) + "\n" 
                     exp_header += "\n# channel    freq    val    snr"    # ヘッダー情報
-                    Util.export_data(self.outflist[i], exp_header, peak_channel, peak_freq, peak_T, peak_snr)
+
+                    tmp1 = self.outflist[i].split('/')
+                    tmp2 = tmp1[-1].split('_')
+                    if nrodata.object_name != 'N/A':
+                        tmp2[0] = nrodata.object_name
+                        tmp2 = '_'.join(tmp2)
+                        tmp1[-1] = tmp2
+                    else:
+                        tmp1[-1] = 'nohead_' + tmp1[-1]
+                        self.Errfilelist.append(self.filelist[i] + "  (Can not read header)")
+
+                    out_filename = '/'.join(tmp1)
+
+                    Util.export_data(out_filename, exp_header, peak_channel, peak_freq, peak_T, peak_snr)
 
 
                 if self.debag:
@@ -255,7 +269,7 @@ class PeakSearch:
 
                     if not self.directory == "":
 
-                        plotpeak.fname = self.plotname + os.path.splitext(self.filelist[i])[0] + '.eps'
+                        plotpeak.fname = self.plotname + os.path.splitext('_'.join(tmp2))[0] + '.eps'
                         
                     else:
                         plotpeak.fname = self.plotname

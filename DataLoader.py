@@ -20,6 +20,7 @@ class GetSpectrum:
         self.date = ""
         self.MJD = 0
         self.min = -50
+        self.object_name = "N/A"
 
 
 
@@ -33,12 +34,20 @@ class GetSpectrum:
 
             for data in line:
                 tmp = data.split()
-                if 'LSCRT9(1) = file create year' in data:
+                if 'LAVST9( 1, 1) =integ start' in data:
                     y = int(data.split("=")[2].strip())
-                if 'LSCRT9(2) = file create month' in data:
+                if 'LAVST9( 2, 1) =integ start' in data:
                     m = int(data.split("=")[2].strip())
-                if 'LSCRT9(3) = file create day' in data:
+                if 'LAVST9( 3, 1) =integ start' in data:
                     d = int(data.split("=")[2].strip())
+                if 'LAVST9( 4, 1) =integ start' in data:
+                    hh = int(data.split("=")[2].strip())
+                if 'LAVST9( 5, 1) =integ start' in data:
+                    mm = int(data.split("=")[2].strip())
+                if 'LAVST9( 6, 1) =integ start' in data:
+                    ss = int(data.split("=")[2].strip())
+                if 'OBJ9   = object name   =' in data:
+                    self.object_name = data.split("=")[2].strip()
 
                 if len(tmp) > 1 and tmp[0].isnumeric() and float(tmp[2]) >= self.min:
                     if 'd' in self.mode:
@@ -56,11 +65,12 @@ class GetSpectrum:
                 for i in range(0, len(self.channel)):
                     print("Data > " + self.channel[i] + "    " + self.freq[i] +  "    " + self.T[i])
             if y != 0 and m != 0 and d != 0:
-                self.date = datetime.datetime(y, m, d, 0, 0, 0)
+                self.date = datetime.datetime(y, m, d, hh, mm, ss)
                 self.MJD = util.datetime2mjd(self.date)
             else:
                 self.date = "N/A"
                 self.MJD = "N/A"
+
                         
         except FileNotFoundError as e:
             print(self.filename + ": No such file or directory")
@@ -73,8 +83,9 @@ class GetSpectrum:
         #     traceback.print_exc()
         #     print("\n\n")
         #     return e
-        else:
+        if self.date != "N/A" and self.MJD != "N/A" and self.object_name != "N/A":
             return True
+        else :return False
 class GetPeak:
     def __init__(self):
         self.peak_freq = []
