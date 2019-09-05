@@ -234,6 +234,7 @@ class PeakSearch:
                         tmp_med = "N/A"
                     exp_header  = "# Rawfile name     = " + self.filelist[i] + "\n"
                     exp_header += "# date             = " + str(nrodata.date) + "\n" 
+                    exp_header += "# MJD             = " + str(nrodata.MJD) + "\n" 
                     exp_header += "# Number of peak   = " + str(len(maser.peak)) + "\n" 
                     exp_header += "# smoothing width  = " + str(self.width) + "\n" 
                     exp_header += "# SNR              = " + str(self.snr) + "\n" 

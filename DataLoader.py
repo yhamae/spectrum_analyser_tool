@@ -56,9 +56,11 @@ class GetSpectrum:
                 for i in range(0, len(self.channel)):
                     print("Data > " + self.channel[i] + "    " + self.freq[i] +  "    " + self.T[i])
             if y != 0 and m != 0 and d != 0:
-                self.date = util.datetime2mjd(datetime.datetime(y, m, d, 0, 0, 0))
+                self.date = datetime.datetime(y, m, d, 0, 0, 0)
+                self.MJD = util.datetime2mjd(self.date)
             else:
                 self.date = "N/A"
+                self.MJD = "N/A"
                         
         except FileNotFoundError as e:
             print(self.filename + ": No such file or directory")
@@ -87,7 +89,7 @@ class GetPeak:
             with codecs.open(self.fname, 'r', 'utf-8', 'ignore') as f:
                 line = f.readlines()
             for tmp in line:
-                if 'date' in tmp:
+                if 'MJD' in tmp:
                     self.date = tmp.split("=")[1].strip('\n')
                 if tmp[0] != "#" and tmp[0] != "\n":
                     self.peak_freq.append(tmp.split()[1])
