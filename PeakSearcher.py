@@ -254,6 +254,7 @@ class PeakSearch:
                         tmp1[-1] = tmp2
                     else:
                         tmp1[-1] = 'nohead_' + tmp1[-1]
+                        tmp2 = 'nohead_' + '_'.join(tmp2)
                         self.Errfilelist.append(self.filelist[i] + "  (Can not read header)")
 
                     out_filename = '/'.join(tmp1)
@@ -269,7 +270,7 @@ class PeakSearch:
 
                     if not self.directory == "":
 
-                        plotpeak.fname = self.plotname + os.path.splitext('_'.join(tmp2))[0] + '.eps'
+                        plotpeak.fname = self.plotname + os.path.splitext(tmp2)[0] + '.eps'
                         
                     else:
                         plotpeak.fname = self.plotname
@@ -282,7 +283,7 @@ class PeakSearch:
                     plotpeak.snr = self.snr
                     plotpeak.label2 = "RMS" + "(" + "σ=" + str(MADFM)[0:7] + ")"
                     plotpeak.label3 = str(self.snr) + "σ"
-                    plotpeak.title = os.path.splitext(self.filelist[i])[0]
+                    plotpeak.title = os.path.splitext(tmp2)[0]
                     self.result.append(plotpeak.ExpPlot())
 
                 # 初期化    
