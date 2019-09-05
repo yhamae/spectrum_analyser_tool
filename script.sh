@@ -5,7 +5,7 @@ echo -e "\033[0;31mPeakSearcher\033[0;39m"
 
 
 # echo SNR = 4
-Python3 PeakSearcher.py -o /Users/yhamae/OneDrive/astro/FLASHING/peak/ -s 4 -w 1 -ws 0 -a /Users/yhamae/OneDrive/astro/FLASHING/spectrum/ -p /Users/yhamae/OneDrive/astro/FLASHING/plot/
+# Python3 PeakSearcher.py -o /Users/yhamae/OneDrive/astro/FLASHING/peak/ -s 4 -w 1 -ws 0 -a /Users/yhamae/OneDrive/astro/FLASHING/spectrum/ -p /Users/yhamae/OneDrive/astro/FLASHING/plot/
 
 echo -e "\033[0;31mTrackFreq\033[0;39m"
 echo -e "\033[0;32mH2O\033[0;39m"
