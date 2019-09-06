@@ -29,7 +29,12 @@ class MyPlot:
         self.label2 = "RMS"
         self.label3 = ""
         self.data = []
+        self.errx = []
+        self.erry = []
+        self.xrange = []
+        self.yrange = []
         self.c = []
+        self.fontsize = 5
     def ExpPlot(self):
         
         
@@ -74,3 +79,41 @@ class MyPlot:
         plt.savefig(self.fname, bbox_inches = 'tight')
         plt.close()
         return True
+
+    def make_fig(self):
+        plt.figure(figsize=(int(self.f_size_x), int(self.f_size_x)), dpi=int(100))
+        plt.xlim(self.xrange[0], self.xrange[1])
+        plt.ylim(self.yrange[0], self.yrange[1])
+
+    def line_and_errbar_plot(self):
+        plt.errorbar(self.x1, self.y1, yerr = self.erry, capsize=5, fmt='o', markersize=10, ecolor='black', markeredgecolor = "black", color='w')
+        plt.plot(self.x1, self.y1, linewidth = float(self.line_width), label=self.label1)
+
+    def line_plot(self):
+        plt.plot(self.x1, self.y1, linewidth = float(self.line_width), label=self.label1)
+
+    def line_and_errbar_plot_ccolor(self):
+        plt.errorbar(self.x1, self.y1, yerr = self.erry, capsize=5, fmt='o', markersize=10, ecolor='black', markeredgecolor = "black", color='w')
+        plt.plot(self.x1, self.y1, linewidth = float(self.line_width), label=self.label1, color = self.c)
+
+    def line_plot_ccolor(self):
+        plt.plot(self.x1, self.y1, linewidth = float(self.line_width), label=self.label1, color = self.c)
+
+    def set_label(self):
+        plt.xlabel(self.x_label)
+        plt.ylabel(self.y_label)
+        plt.title(self.title)
+
+    def save_fig(self):
+        plt.legend()
+        plt.savefig(self.fname, bbox_inches = 'tight')
+        plt.close()
+
+    def show(self):
+        plt.legend()
+        plt.show()
+        plt.close()
+
+
+
+
