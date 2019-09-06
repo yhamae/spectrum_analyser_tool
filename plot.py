@@ -33,6 +33,7 @@ class MyPlot:
         self.erry = []
         self.xrange = []
         self.yrange = []
+        self.clabel = ""
         self.c = []
         self.fontsize = 5
     def ExpPlot(self):
@@ -74,7 +75,8 @@ class MyPlot:
         # plt.imshow(self.c)
         plt.title(self.title)
         # plt.legend()
-        plt.colorbar()
+        cbar = plt.colorbar()
+        cbar.set_label(self.clabel)
         # plt.show()
         plt.savefig(self.fname, bbox_inches = 'tight')
         plt.close()

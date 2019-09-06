@@ -126,13 +126,14 @@ class TrackingFrequently:
             print(e)
             exit()
 
-        header = "# source = " + self.source + "\n"
+        header  = "# source   = " + self.source + "\n"
         header += "# molecule = " + self.ref_freq + "\n"
         header += "# Receiver = " + self.reciver + "\n"
+        header += "# Ae       = " + str(self.aperture_efficiency[self.reciver] * (self.r_ant / 2) * (self.r_ant / 2) * math.pi) + "\n"
         # header += "VakueAverage = " + str(sum(self.raw_val) / len(self.raw_val)) + "\n"
-        header += "\n# MJD    Freq    Val"
+        header += "\n# MJD[day]    LSR[km/s]    FluxDensity[Jy]    log10(FluxDensity)"
 
-        ut.export_data(self.oname, header, self.time, self.raw_freq, self.raw_val)
+        ut.export_data(self.oname, header, self.time, self.raw_freq, self.raw_val, tmp_val)
 
 
         pl = plot.MyPlot()
@@ -142,6 +143,7 @@ class TrackingFrequently:
         pl.c = tmp_val
         pl.y_label = "LSR[km/s]"
         pl.x_label = "MJD[day]"
+        pl.clabel = "Flux density (Common logarithms)"
         pl.title = self.source + " " + self.ref_freq
         pl.fname = os.path.splitext(self.oname)[0] + "." + self.plottype
         pl.freq_tracking_plot()
