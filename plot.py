@@ -36,6 +36,7 @@ class MyPlot:
         self.clabel = ""
         self.c = []
         self.fontsize = 5
+        self.ii = 0
     def ExpPlot(self):
         
         
@@ -88,15 +89,12 @@ class MyPlot:
         plt.ylim(self.yrange[0], self.yrange[1])
 
     def line_and_errbar_plot(self):
-        plt.errorbar(self.x1, self.y1, yerr = self.erry, capsize=5, fmt='o', markersize=10, ecolor='black', markeredgecolor = "black", color='w')
-        plt.plot(self.x1, self.y1, linewidth = float(self.line_width), label=self.label1)
+        cmap = plt.get_cmap("tab20")
+        plt.errorbar(self.x1, self.y1, yerr = self.erry, capsize=5, fmt='o',  ecolor=cmap(self.ii), color=cmap(self.ii))
+        plt.plot(self.x1, self.y1, linewidth = float(self.line_width), label=self.label1, color = cmap(self.ii))
 
     def line_plot(self):
         plt.plot(self.x1, self.y1, linewidth = float(self.line_width), label=self.label1)
-
-    def line_and_errbar_plot_ccolor(self):
-        plt.errorbar(self.x1, self.y1, yerr = self.erry, capsize=5, fmt='o', markersize=10, ecolor='black', markeredgecolor = "black", color='w')
-        plt.plot(self.x1, self.y1, linewidth = float(self.line_width), label=self.label1, color = self.c)
 
     def line_plot_ccolor(self):
         plt.plot(self.x1, self.y1, linewidth = float(self.line_width), label=self.label1, color = self.c)
@@ -108,7 +106,8 @@ class MyPlot:
 
     def save_fig(self):
         plt.legend()
-        plt.savefig(self.fname, bbox_inches = 'tight')
+        # plt.savefig(self.fname, bbox_inches = 'tight')
+        plt.savefig(self.fname)
         plt.close()
 
     def show(self):
