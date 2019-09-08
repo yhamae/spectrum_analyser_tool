@@ -92,7 +92,7 @@ class TrackingFrequently:
             tmp_val = gp.peak_val
 
             for freq, val in zip(tmp_freq, tmp_val):
-                self.rawdata.append([float(tmp_date), float(freq), float(val) * 2 * constants.value('Boltzmann constant') * 1E+26 / (self.aperture_efficiency[self.reciver] * (self.r_ant / 2) * (self.r_ant / 2) * math.pi)])
+                self.rawdata.append([float(tmp_date), float(freq), float(val) * 2 * constants.value('Boltzmann constant') * 1E+26 / (self.aperture_efficiency[self.reciver] * (self.r_ant / 2) * (self.r_ant / 2) * math.pi), float(val)])
                 # 2k_b/A_e
 
             self.data_index[tmp_date] = [start_index, len(self.rawdata) - 1]
@@ -112,12 +112,16 @@ class TrackingFrequently:
 
 
         tmp_val = []
+        tmp_raw_val = []
+        tmp_raw_val_log10 = []
         try:
             for i in range(0, len(self.rawdata)):
                 self.time.append(float(self.rawdata[i][0]))
                 self.raw_freq.append(float(self.rawdata[i][1]))
                 self.raw_val.append(float(self.rawdata[i][2]))
+                tmp_raw_val.append(float(self.rawdata[i][3]))
                 tmp_val.append(math.log10(float(self.rawdata[i][2])))
+                tmp_raw_val_log10.append(math.log10(float(self.rawdata[i][3])))
             # ut.chkprint(i)
         except IndexError as e:
             print(e)
@@ -131,19 +135,23 @@ class TrackingFrequently:
         header += "# Receiver = " + self.reciver + "\n"
         header += "# Ae       = " + str(self.aperture_efficiency[self.reciver] * (self.r_ant / 2) * (self.r_ant / 2) * math.pi) + "\n"
         # header += "VakueAverage = " + str(sum(self.raw_val) / len(self.raw_val)) + "\n"
-        header += "\n# MJD[day]    LSR[km/s]    FluxDensity[Jy]    log10(FluxDensity)"
+        header += "\n# MJD[day]    LSR[km/s]    FluxDensity[Jy]    AntennaTemperature[K]"
 
-        ut.export_data(self.oname, header, self.time, self.raw_freq, self.raw_val, tmp_val)
+        ut.export_data(self.oname, header, self.time, self.raw_freq, self.raw_val, tmp_raw_val)
 
 
         pl = plot.MyPlot()
         pl.data = np.array(self.rawdata)
         pl.x1 = self.time
         pl.y1 = self.raw_freq
+        # フラックス密度
         pl.c = tmp_val
+        pl.clabel = "Flux density (Common logarithms)"
+        # アンテナ温度
+        # pl.c = tmp_raw_val_log10
+        # pl.clabel = "Antenna temperature (Common logarithms)"
         pl.y_label = "LSR[km/s]"
         pl.x_label = "MJD[day]"
-        pl.clabel = "Flux density (Common logarithms)"
         pl.title = self.source + " " + self.ref_freq
         pl.fname = os.path.splitext(self.oname)[0] + "." + self.plottype
         pl.freq_tracking_plot()
