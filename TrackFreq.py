@@ -227,6 +227,9 @@ class TrackingFrequently:
 
 
         return True
+
+class CalVariation:
+    pass:
     
         
 
