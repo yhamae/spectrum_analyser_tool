@@ -90,9 +90,10 @@ class TrackingFrequently:
             tmp_date = gp.date
             tmp_freq = gp.peak_freq
             tmp_val = gp.peak_val
+            tmp_channel = gp.channel
 
-            for freq, val in zip(tmp_freq, tmp_val):
-                self.rawdata.append([float(tmp_date), float(freq), float(val) * 2 * constants.value('Boltzmann constant') * 1E+26 / (self.aperture_efficiency[self.reciver] * (self.r_ant / 2) * (self.r_ant / 2) * math.pi), float(val)])
+            for freq, val , channel in zip(tmp_freq, tmp_val, tmp_channel):
+                self.rawdata.append([float(tmp_date), int(channel), float(freq), float(val) * 2 * constants.value('Boltzmann constant') * 1E+26 / (self.aperture_efficiency[self.reciver] * (self.r_ant / 2) * (self.r_ant / 2) * math.pi), float(val)])
                 # 2k_b/A_e
 
             self.data_index[tmp_date] = [start_index, len(self.rawdata) - 1]
@@ -117,11 +118,11 @@ class TrackingFrequently:
         try:
             for i in range(0, len(self.rawdata)):
                 self.time.append(float(self.rawdata[i][0]))
-                self.raw_freq.append(float(self.rawdata[i][1]))
-                self.raw_val.append(float(self.rawdata[i][2]))
-                tmp_raw_val.append(float(self.rawdata[i][3]))
-                tmp_val.append(math.log10(float(self.rawdata[i][2])))
-                tmp_raw_val_log10.append(math.log10(float(self.rawdata[i][3])))
+                self.raw_freq.append(float(self.rawdata[i][2]))
+                self.raw_val.append(float(self.rawdata[i][3]))
+                tmp_raw_val.append(float(self.rawdata[i][4]))
+                tmp_val.append(math.log10(float(self.rawdata[i][3])))
+                tmp_raw_val_log10.append(math.log10(float(self.rawdata[i][4])))
             # ut.chkprint(i)
         except IndexError as e:
             print(e)
@@ -215,7 +216,7 @@ class TrackingFrequently:
         tmp_f = []
         plt.scatter(tmp_x, tmp_y, c = tmp_c, cmap='jet')
         print("近似曲線")
-        for i in range(0, 3):
+        for i in range(0, 1):
             self.a_x.append(np.polyfit(tmp_x, tmp_y, i + 1))
             tmp_f.append(np.poly1d(self.a_x[i])(tmp_x))
             print(np.poly1d(self.a_x[i]))
@@ -229,8 +230,48 @@ class TrackingFrequently:
         return True
 
 class CalVariation:
-    pass:
-    
+    def __init__(self):
+        pass
+
+
+    def minimum_difference(self, a, b, n):
+        def f_1(x):
+            d = 0
+            # print(n)
+            # print(x)
+            if x >= 0:
+                for i in range(0, int(n) - int(x)):
+                    d += math.fabs(float(a[i + int(x)]) - float(b[i]))
+                return d / (int(n) - int(x))
+            if x < 0:
+                for i in range(0, int(n) + int(x)):
+                    d += math.fabs(float(b[i - int(x)]) - float(a[i]))
+                return d / (int(n) + int(x))
+
+
+
+        # x = np.arange(-1 * int(n) + 1, int(n), 1)
+        x = np.arange(-100, 100, 1)
+        # print(x)
+
+        y = [f_1(i) for i in x]
+
+
+        f_min = min(y)
+        x_min = x[y.index(f_min)]
+        print(x_min)
+        plt.plot(x, y, label='f(x)')
+        # plt.xlim(-50, 50)
+        # plt.ylim(0.3, 0.5)
+        plt.grid(which='major',color='black',linestyle='-')
+        plt.grid(which='minor',color='black',linestyle='-')
+
+        # plt.legend()
+        # plt.show()
+    def show(self):
+        plt.legend()
+        plt.show()
+        
         
 
 
@@ -246,6 +287,37 @@ if __name__ == "__main__":
     result1 = tf.get_peak_data()
     if "-a" in args:  # 最後に-aをつけると計算モード
         result2 = tf.analysis_peak()
+    if "-c" in args:  # 
+        cal = CalVariation()
+        data_key = list(tf.data_index.keys())
+        # print(data_key)
+        for i in range(0, len(data_key) - 1):
+            max_channel = 2048
+            a = [0] * max_channel
+            b = [0] * max_channel
+            # ut.chkprint(len(tf.rawdata))
+            for j in range(0, len(tf.rawdata)):
+                if int(tf.rawdata[j][1]) < max_channel:
+                    if int(tf.rawdata[j][1]) <= 1024:
+                        tmp = int(tf.rawdata[j][1])
+                    else:
+                        tmp = 2048 - int(tf.rawdata[j][1])
+                    if float(tf.rawdata[j][0]) == float(data_key[i]):
+                        # print("!")
+                        # ut.chkprint(tf.rawdata[i][3])
+                        a[tmp] = float(tf.rawdata[j][3])
+                        # a[int(tf.rawdata[j][1])] = 1
+                    if float(tf.rawdata[j][0]) == float(data_key[i + 1]):
+                        # ut.chkprint(tf.rawdata[i][3])
+                        b[tmp] = float(tf.rawdata[j][3])
+                        # b[int(tf.rawdata[j][1])] = 1
+            # ut.chkprint(a, b)
+            cal.minimum_difference(a, b, 1024)
+        cal.show()
+
+
+
+        result2 = True
     else:
         result2 = True
     if result1 and result2:

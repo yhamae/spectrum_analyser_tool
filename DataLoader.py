@@ -91,6 +91,7 @@ class GetPeak:
         self.peak_freq = []
         self.peak_val = []
         self.fname = ""
+        self.channel = []
         self.mode = ""
         self.header_num = 0
         self.date = 0
@@ -103,6 +104,7 @@ class GetPeak:
                 if 'MJD' in tmp:
                     self.date = tmp.split("=")[1].strip('\n')
                 if tmp[0] != "#" and tmp[0] != "\n":
+                    self.channel.append(tmp.split()[0])
                     self.peak_freq.append(tmp.split()[1])
                     self.peak_val.append(tmp.split()[2])
                     
