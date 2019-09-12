@@ -234,7 +234,7 @@ class CalVariation:
         pass
 
 
-    def minimum_difference(self, a, b, n):
+    def minimum_difference(self, a, b, n, delta_x):
         def f_1(x):
             d = 0
             # print(n)
@@ -251,15 +251,17 @@ class CalVariation:
 
 
         # x = np.arange(-1 * int(n) + 1, int(n), 1)
-        x = np.arange(-100, 100, 1)
+        x = np.arange(-60, 60, 1)
         # print(x)
 
         y = [f_1(i) for i in x]
+        
 
 
         f_min = min(y)
         x_min = x[y.index(f_min)]
-        print(x_min)
+        x = [365.25 * i / delta_x for i in x]
+
         plt.plot(x, y, label='f(x)')
         # plt.xlim(-50, 50)
         # plt.ylim(0.3, 0.5)
@@ -268,6 +270,7 @@ class CalVariation:
 
         # plt.legend()
         # plt.show()
+        return x_min * 365.25 / delta_x
     def show(self):
         plt.legend()
         plt.show()
@@ -290,6 +293,7 @@ if __name__ == "__main__":
     if "-c" in args:  # 
         cal = CalVariation()
         data_key = list(tf.data_index.keys())
+        data_key.sort()
         # print(data_key)
         for i in range(0, len(data_key) - 1):
             max_channel = 2048
@@ -298,7 +302,8 @@ if __name__ == "__main__":
             # ut.chkprint(len(tf.rawdata))
             for j in range(0, len(tf.rawdata)):
                 if int(tf.rawdata[j][1]) < max_channel:
-                    if int(tf.rawdata[j][1]) <= 1024:
+                    # if int(tf.rawdata[j][1]) <= 1122:
+                    if int(tf.rawdata[j][2]) >= 0:
                         tmp = int(tf.rawdata[j][1])
                     else:
                         tmp = 2048 - int(tf.rawdata[j][1])
@@ -312,7 +317,10 @@ if __name__ == "__main__":
                         b[tmp] = float(tf.rawdata[j][3])
                         # b[int(tf.rawdata[j][1])] = 1
             # ut.chkprint(a, b)
-            cal.minimum_difference(a, b, 1024)
+            print("date", end = ": ")
+            # print((float(data_key[i + 1]) - float(data_key[i])))
+            d = cal.minimum_difference(a, b, 1024, (float(data_key[i + 1]) - float(data_key[i])))
+            print(d)
         cal.show()
 
 
