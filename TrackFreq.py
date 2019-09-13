@@ -231,7 +231,7 @@ class TrackingFrequently:
 
 class CalVariation:
     def __init__(self):
-        pass
+        self.data = []
 
 
     def minimum_difference(self, a, b, n, delta_x):
@@ -261,8 +261,10 @@ class CalVariation:
         f_min = min(y)
         x_min = x[y.index(f_min)]
         x = [365.25 * i / delta_x for i in x]
+        for tmp_x, tmp_y in zip(x, y):
+            self.data.append([tmp_x, tmp_y])
 
-        plt.plot(x, y, label='f(x)')
+        # plt.plot(x, y, label='f(x)')
         # plt.xlim(-50, 50)
         # plt.ylim(0.3, 0.5)
         plt.grid(which='major',color='black',linestyle='-')
@@ -294,8 +296,11 @@ if __name__ == "__main__":
         cal = CalVariation()
         data_key = list(tf.data_index.keys())
         data_key.sort()
+        x = [0] * 2048
+        y = [0] * 2048
         # print(data_key)
         for i in range(0, len(data_key) - 1):
+            cal = CalVariation()
             max_channel = 2048
             a = [0] * max_channel
             b = [0] * max_channel
@@ -307,7 +312,7 @@ if __name__ == "__main__":
                         tmp = int(tf.rawdata[j][1])
                     else:
                         tmp = 2048 - int(tf.rawdata[j][1])
-                    if float(tf.rawdata[j][0]) == float(data_key[i]):
+                    if float(tf.rawdata[j][0]) == float(data_key[0]):
                         # print("!")
                         # ut.chkprint(tf.rawdata[i][3])
                         a[tmp] = float(tf.rawdata[j][3])
@@ -319,9 +324,14 @@ if __name__ == "__main__":
             # ut.chkprint(a, b)
             print("date", end = ": ")
             # print((float(data_key[i + 1]) - float(data_key[i])))
-            d = cal.minimum_difference(a, b, 1024, (float(data_key[i + 1]) - float(data_key[i])))
+            d = cal.minimum_difference(a, b, 2048, (float(data_key[i + 1]) - float(data_key[i])))
+            for k in range(0, len(cal.data)):
+                y[k] += cal.data[k][1]
+                x[k] = cal.data[k][0]
             print(d)
-        cal.show()
+        plt.plot(x, y)
+        plt.show()
+        # cal.show()
 
 
 
