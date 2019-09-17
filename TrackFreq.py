@@ -296,8 +296,7 @@ if __name__ == "__main__":
         cal = CalVariation()
         data_key = list(tf.data_index.keys())
         data_key.sort()
-        x = [0] * 2048
-        y = [0] * 2048
+        
         # print(data_key)
         for i in range(0, len(data_key) - 1):
             cal = CalVariation()
@@ -325,13 +324,22 @@ if __name__ == "__main__":
             print("date", end = ": ")
             # print((float(data_key[i + 1]) - float(data_key[i])))
             d = cal.minimum_difference(a, b, 2048, (float(data_key[i + 1]) - float(data_key[i])))
+            # plt.figure()
+            plt.plot([cal.data[i][0] for i in range(0, len(cal.data))], [cal.data[i][1] for i in range(0, len(cal.data))])
+            plt.grid(which='major',color='black',linestyle='-')
+            plt.grid(which='minor',color='black',linestyle='-')
+            plt.show()
+            x = [0] * len(cal.data)
+            y = [0] * len(cal.data)
             for k in range(0, len(cal.data)):
                 y[k] += cal.data[k][1]
                 x[k] = cal.data[k][0]
             print(d)
         plt.plot(x, y)
+        plt.grid(which='major',color='black',linestyle='-')
+        plt.grid(which='minor',color='black',linestyle='-')
         plt.show()
-        # cal.show()
+        
 
 
 
