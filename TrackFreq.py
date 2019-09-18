@@ -249,11 +249,11 @@ class CalVariation:
             if x >= 0:
                 for i in range(0, int(n) - int(x)):
                     d += math.fabs(float(a[i + int(x)]) - float(b[i]))
-                return d / (int(n) - int(x)) / count
+                return d / (int(n) - int(x))
             if x < 0:
                 for i in range(0, int(n) + int(x)):
                     d += math.fabs(float(b[i - int(x)]) - float(a[i]))
-                return d / (int(n) + int(x)) / count
+                return d / (int(n) + int(x))
 
 
 
@@ -336,7 +336,7 @@ if __name__ == "__main__":
                         b[tmp] += float(tf.rawdata[j][3])
                         b[int(tf.rawdata[j][1])] = 1
             # ut.chkprint(a, b)
-            print("date", end = ": ")
+            # print("date", end = ": ")
             # print((float(data_key[i + 1]) - float(data_key[i])))
             d = cal.minimum_difference(a, b, (float(data_key[i + 1]) - float(data_key[i])), range_min, range_max)
             delta_x = float(data_key[i + 1]) - float(data_key[i])
@@ -350,7 +350,7 @@ if __name__ == "__main__":
             for k in range(0, len(cal.data)):
                 y[k] += cal.data[k][1] * 365.25 / delta_x
                 x[k] = cal.data[k][0]
-            print(d)
+            ut.chkprint(d)
         plt.plot(x, y)
         plt.grid(which='major',color='black',linestyle='-')
         plt.grid(which='minor',color='black',linestyle='-')
