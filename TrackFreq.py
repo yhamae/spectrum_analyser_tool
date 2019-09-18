@@ -234,24 +234,31 @@ class CalVariation:
         self.data = []
 
 
-    def minimum_difference(self, a, b, n, delta_x):
+    def minimum_difference(self, a, b, delta_x, range_min, range_max):
+        n = len(a)
+        if len(a) != len(b):
+            print('ERR')
         def f_1(x):
+            count = 0
+            for i in range(0, n):
+                if a[i] != 0: count += 1
+                if b[i] != 0: count += 1
             d = 0
             # print(n)
             # print(x)
             if x >= 0:
                 for i in range(0, int(n) - int(x)):
                     d += math.fabs(float(a[i + int(x)]) - float(b[i]))
-                return d / (int(n) - int(x))
+                return d / (int(n) - int(x)) / count
             if x < 0:
                 for i in range(0, int(n) + int(x)):
                     d += math.fabs(float(b[i - int(x)]) - float(a[i]))
-                return d / (int(n) + int(x))
+                return d / (int(n) + int(x)) / count
 
 
 
         # x = np.arange(-1 * int(n) + 1, int(n), 1)
-        x = np.arange(-60, 60, 1)
+        x = np.arange(range_min, range_max, 1)
         # print(x)
 
         y = [f_1(i) for i in x]
@@ -263,6 +270,8 @@ class CalVariation:
         x = [365.25 * i / delta_x for i in x]
         for tmp_x, tmp_y in zip(x, y):
             self.data.append([tmp_x, tmp_y])
+        
+
 
         # plt.plot(x, y, label='f(x)')
         # plt.xlim(-50, 50)
@@ -297,47 +306,56 @@ if __name__ == "__main__":
         data_key = list(tf.data_index.keys())
         data_key.sort()
         
-        # print(data_key)
+        print(data_key)
         for i in range(0, len(data_key) - 1):
             cal = CalVariation()
             max_channel = 2048
+            range_pm = 15
+            range_max = range_pm
+            range_min = -1 * range_pm
             a = [0] * max_channel
             b = [0] * max_channel
+            x = [0] * (range_max - range_min + 1)
+            y = [0] * (range_max - range_min + 1)
             # ut.chkprint(len(tf.rawdata))
             for j in range(0, len(tf.rawdata)):
+                # index_num = 
                 if int(tf.rawdata[j][1]) < max_channel:
                     # if int(tf.rawdata[j][1]) <= 1122:
                     if int(tf.rawdata[j][2]) >= 0:
                         tmp = int(tf.rawdata[j][1])
                     else:
                         tmp = 2048 - int(tf.rawdata[j][1])
-                    if float(tf.rawdata[j][0]) == float(data_key[0]):
+                    if float(tf.rawdata[j][0]) == float(data_key[i]):
                         # print("!")
                         # ut.chkprint(tf.rawdata[i][3])
-                        a[tmp] = float(tf.rawdata[j][3])
-                        # a[int(tf.rawdata[j][1])] = 1
+                        a[tmp] += float(tf.rawdata[j][3])
+                        a[int(tf.rawdata[j][1])] = 1
                     if float(tf.rawdata[j][0]) == float(data_key[i + 1]):
                         # ut.chkprint(tf.rawdata[i][3])
-                        b[tmp] = float(tf.rawdata[j][3])
-                        # b[int(tf.rawdata[j][1])] = 1
+                        b[tmp] += float(tf.rawdata[j][3])
+                        b[int(tf.rawdata[j][1])] = 1
             # ut.chkprint(a, b)
             print("date", end = ": ")
             # print((float(data_key[i + 1]) - float(data_key[i])))
-            d = cal.minimum_difference(a, b, 2048, (float(data_key[i + 1]) - float(data_key[i])))
+            d = cal.minimum_difference(a, b, (float(data_key[i + 1]) - float(data_key[i])), range_min, range_max)
+            delta_x = float(data_key[i + 1]) - float(data_key[i])
             # plt.figure()
-            plt.plot([cal.data[i][0] for i in range(0, len(cal.data))], [cal.data[i][1] for i in range(0, len(cal.data))])
+            ut.chkprint(delta_x)
+            plt.plot([cal.data[i][0]for i in range(0, len(cal.data))], [cal.data[i][1] for i in range(0, len(cal.data))])
             plt.grid(which='major',color='black',linestyle='-')
             plt.grid(which='minor',color='black',linestyle='-')
             plt.show()
-            x = [0] * len(cal.data)
-            y = [0] * len(cal.data)
+            
             for k in range(0, len(cal.data)):
-                y[k] += cal.data[k][1]
+                y[k] += cal.data[k][1] * 365.25 / delta_x
                 x[k] = cal.data[k][0]
             print(d)
         plt.plot(x, y)
         plt.grid(which='major',color='black',linestyle='-')
         plt.grid(which='minor',color='black',linestyle='-')
+        plt.title('all')
+        plt.legend()
         plt.show()
         
 
