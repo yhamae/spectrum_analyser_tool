@@ -350,6 +350,12 @@ if __name__ == "__main__":
             for k in range(0, len(cal.data)):
                 y[k] += cal.data[k][1] * 365.25 / delta_x
                 x[k] = cal.data[k][0]
+            for k in range(0, (range_max - range_min + 1)):
+                if  y[k] == 0 and x[k] == 0:
+                    print(x.pop(k))
+                    print(y.pop(k))
+
+
             ut.chkprint(d)
         plt.plot(x, y)
         plt.grid(which='major',color='black',linestyle='-')
