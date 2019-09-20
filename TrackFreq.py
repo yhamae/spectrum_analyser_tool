@@ -9,6 +9,9 @@ from scipy import constants
 from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set() 
+# %matplotlib inline
 
 import PeakSearcher
 import Util as ut
@@ -307,6 +310,9 @@ if __name__ == "__main__":
         data_key.sort()
         
         print(data_key)
+
+        # splot = plt.figure(figsize=(20,20))
+
         for i in range(0, len(data_key) - 1):
             cal = CalVariation()
             max_channel = 2048
@@ -341,8 +347,20 @@ if __name__ == "__main__":
             d = cal.minimum_difference(a, b, (float(data_key[i + 1]) - float(data_key[i])), range_min, range_max)
             delta_x = float(data_key[i + 1]) - float(data_key[i])
             # plt.figure()
+
+            # ax = splot.add_subplot(len(data_key), 1, i + 1)
+            
+            # ax = splot.add_subplot(2, 1, 1)
+
+
+            # sns.lineplot(x = [cal.data[i][0]for i in range(0, len(cal.data))], y =  [cal.data[i][1] for i in range(0, len(cal.data))], ax = ax)
+
+
+
+
             ut.chkprint(delta_x)
             plt.plot([cal.data[i][0]for i in range(0, len(cal.data))], [cal.data[i][1] for i in range(0, len(cal.data))])
+            plt.title(data_key[i] + ' --> ' + data_key[i + 1])
             plt.grid(which='major',color='black',linestyle='-')
             plt.grid(which='minor',color='black',linestyle='-')
             plt.show()
@@ -352,11 +370,18 @@ if __name__ == "__main__":
                 x[k] = cal.data[k][0]
             for k in range(0, (range_max - range_min + 1)):
                 if  y[k] == 0 and x[k] == 0:
-                    print(x.pop(k))
-                    print(y.pop(k))
+                    x.pop(k)
+                    y.pop(k)
 
 
             ut.chkprint(d)
+
+
+        # plt.show()
+        # ax = splot.add_subplot(len(data_key), 1, len(data_key))
+        # ax = splot.add_subplot(2, 1, 2)
+        # sns.lineplot(x = x, y = y, ax = ax)
+        
         plt.plot(x, y)
         plt.grid(which='major',color='black',linestyle='-')
         plt.grid(which='minor',color='black',linestyle='-')
