@@ -9,6 +9,7 @@ from scipy import constants
 from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit 
 import seaborn as sns
 sns.set() 
 # %matplotlib inline
@@ -200,9 +201,39 @@ class TrackingFrequently:
 
         # plt.savefig('fig_test.png')
         plt.show()
-        print(self.a)
+        # print(self.a)
 
         return True
+
+    def sin_fitting(self):
+        self.x = self.time
+        self.y = self.raw_freq
+        self.c = [math.log10(s) for s in self.raw_val]
+        TrackingFrequently.get_click_point(self)
+        tmp_x = [self.a[i][0] for i in range(0, len(self.a))]
+        tmp_y = [self.a[i][1] for i in range(0, len(self.a))]
+        tmp_c = [math.log10(self.a[i][2]) for i in range(0, len(self.a))]
+        tmp_f = []
+        plt.scatter(tmp_x, tmp_y, c = tmp_c, cmap='jet')
+        x = np.array(tmp_x)
+        y = np.array(tmp_y)
+
+        def func1(X, a, b, c, d):
+            tmp = []
+            for val in X:
+                tmp.append(float(a) * math.sin(float(b) * float(val) + float(c)) + float(d))
+            return np.array(tmp)
+
+        popt, pcov = curve_fit(func1,np.array(tmp_x), np.array(tmp_y))
+        print("y = " + str(popt[0])[0:5] + "sin(" + str(popt[1])[0:5] + "x + " + str(popt[2])[0:5] + ") + " + str(popt[3])[0:5])
+        func2 = []
+        # for val in tmp_x:
+        func2.append(func1(tmp_x, popt[0], popt[1], popt[2], popt[3]))
+        # tmp_sin = np.sin()
+        ti = str(popt[0])[0:5] + "sin(" + str(popt[1])[0:5] + "x + " + str(popt[2])[0:5] + ") + " + str(popt[3])[0:5]
+        plt.plot(tmp_x, func1(tmp_x, popt[0], popt[1], popt[2], popt[3]), label = ti)
+        plt.legend()
+        plt.show()
 
 
     def analysis_peak(self):
@@ -304,6 +335,8 @@ if __name__ == "__main__":
     result1 = tf.get_peak_data()
     if "-a" in args:  # 最後に-aをつけると計算モード
         result2 = tf.analysis_peak()
+    if "-sin" in args:
+        result2 = tf.sin_fitting()
     if "-c" in args:  # 
         cal = CalVariation()
         data_key = list(tf.data_index.keys())
