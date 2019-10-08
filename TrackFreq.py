@@ -250,7 +250,7 @@ class TrackingFrequently:
         tmp_f = []
         plt.scatter(tmp_x, tmp_y, c = tmp_c, cmap='jet')
         print("近似曲線")
-        for i in range(0, 1):
+        for i in range(0, 2):
             self.a_x.append(np.polyfit(tmp_x, tmp_y, i + 1))
             tmp_f.append(np.poly1d(self.a_x[i])(tmp_x))
             print(np.poly1d(self.a_x[i]))
@@ -262,6 +262,91 @@ class TrackingFrequently:
 
 
         return True
+
+    def linear_fitting(self):
+        cal = CalVariation()
+        data_key = list(self.data_index.keys())
+        data_key.sort()
+        
+        print(data_key)
+
+        # splot = plt.figure(figsize=(20,20))
+
+        for i in range(0, len(data_key) - 1):
+            cal = CalVariation()
+            max_channel = 2048
+            range_pm = 15
+            range_max = range_pm
+            range_min = -1 * range_pm
+            a = [0] * max_channel
+            b = [0] * max_channel
+            x = [0] * (range_max - range_min + 1)
+            y = [0] * (range_max - range_min + 1)
+            # ut.chkprint(len(tf.rawdata))
+            for j in range(0, len(self.rawdata)):
+                # index_num = 
+                if int(self.rawdata[j][1]) < max_channel:
+                    # if int(tf.rawdata[j][1]) <= 1122:
+                    if int(self.rawdata[j][2]) >= 0:
+                        tmp = int(self.rawdata[j][1])
+                    else:
+                        tmp = 2048 - int(self.rawdata[j][1])
+                    if float(self.rawdata[j][0]) == float(data_key[i]):
+                        # print("!")
+                        # ut.chkprint(tf.rawdata[i][3])
+                        a[tmp] += float(self.rawdata[j][3])
+                        a[int(self.rawdata[j][1])] = 1
+                    if float(tf.rawdata[j][0]) == float(data_key[i + 1]):
+                        # ut.chkprint(tf.rawdata[i][3])
+                        b[tmp] += float(self.rawdata[j][3])
+                        b[int(self.rawdata[j][1])] = 1
+            # ut.chkprint(a, b)
+            # print("date", end = ": ")
+            # print((float(data_key[i + 1]) - float(data_key[i])))
+            d = cal.minimum_difference(a, b, (float(data_key[i + 1]) - float(data_key[i])), range_min, range_max)
+            delta_x = float(data_key[i + 1]) - float(data_key[i])
+            # plt.figure()
+
+            # ax = splot.add_subplot(len(data_key), 1, i + 1)
+            
+            # ax = splot.add_subplot(2, 1, 1)
+
+
+            # sns.lineplot(x = [cal.data[i][0]for i in range(0, len(cal.data))], y =  [cal.data[i][1] for i in range(0, len(cal.data))], ax = ax)
+
+
+
+
+            ut.chkprint(delta_x)
+            plt.plot([cal.data[i][0]for i in range(0, len(cal.data))], [cal.data[i][1] for i in range(0, len(cal.data))])
+            plt.title(data_key[i] + ' --> ' + data_key[i + 1])
+            plt.grid(which='major',color='black',linestyle='-')
+            plt.grid(which='minor',color='black',linestyle='-')
+            plt.show()
+            
+            for k in range(0, len(cal.data)):
+                y[k] += cal.data[k][1] * 365.25 / delta_x
+                x[k] = cal.data[k][0]
+            for k in range(0, (range_max - range_min + 1)):
+                if  y[k] == 0 and x[k] == 0:
+                    x.pop(k)
+                    y.pop(k)
+
+
+            ut.chkprint(d)
+
+
+        # plt.show()
+        # ax = splot.add_subplot(len(data_key), 1, len(data_key))
+        # ax = splot.add_subplot(2, 1, 2)
+        # sns.lineplot(x = x, y = y, ax = ax)
+        
+        plt.plot(x, y)
+        plt.grid(which='major',color='black',linestyle='-')
+        plt.grid(which='minor',color='black',linestyle='-')
+        plt.title('all')
+        plt.legend()
+        plt.show()
 
 class CalVariation:
     def __init__(self):
@@ -319,6 +404,8 @@ class CalVariation:
     def show(self):
         plt.legend()
         plt.show()
+
+
         
         
 
