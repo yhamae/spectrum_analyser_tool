@@ -169,6 +169,8 @@ class TrackingFrequently:
     def get_click_point(self):
         # try:
         plt.scatter(self.x, self.y, c=self.c, cmap='jet')
+        # x_tics = list(plt.xticks())
+        # plt.xticks(list(plt.xticks())[0], [ut.mjd2datetime(int(s)).strftime("%y.%m.%d") for s in list(plt.xticks())[0]])
         plt.colorbar()
 
         a = plt.ginput(n=-1, mouse_add=1, mouse_pop=2, mouse_stop=3, timeout = 600)
@@ -177,10 +179,12 @@ class TrackingFrequently:
         # mouse_popでUndo（右クリック）
         # mouse_stopでインプットを終了する（ミドルクリック）
         # print("click coordinate is berrow")
+        # print(a)
+        
         for c, d in a:
             tmp = []
             count = 0
-            for tmp_x, tmp_y, tmp_c in zip(self.time, self.raw_freq, self.raw_val):
+            for tmp_x, tmp_y, tmp_c in zip(self.x, self.y, self.c):
                 if math.fabs(c - tmp_x) <= self.thresholds_x and math.fabs(d - tmp_y) <= self.thresholds_y:
                     dr = (c - tmp_x) * (c - tmp_x) + (d - tmp_y) * (d - tmp_y)
                     tmp.append([tmp_x, tmp_y, tmp_c, dr])
@@ -189,15 +193,16 @@ class TrackingFrequently:
                     
             if len(tmp) == 1:
                 self.a.append(tmp[0][0:3])
-                plt.scatter(tmp[0][0], tmp[0][1], c = 'black')
+                plt.scatter(tmp[0][0], tmp[0][1], c = 'Magenta', marker='x')
             elif count == 0:
                 continue
             else:
                 tmp_val = [tmp[i][3] for i in range(0, len(tmp))]
                 j = tmp_val.index(min(tmp_val))
                 self.a.append(tmp[j][0:3])
-                plt.scatter(tmp[j][0], tmp[j][1], c = 'black')
+                plt.scatter(tmp[j][0], tmp[j][1], c = 'Magenta', marker='x')
             del tmp
+        
 
         # plt.savefig('fig_test.png')
         plt.show()
@@ -206,9 +211,6 @@ class TrackingFrequently:
         return True
 
     def sin_fitting(self):
-        self.x = self.time
-        self.y = self.raw_freq
-        self.c = [math.log10(s) for s in self.raw_val]
         TrackingFrequently.get_click_point(self)
         tmp_x = [self.a[i][0] for i in range(0, len(self.a))]
         tmp_y = [self.a[i][1] for i in range(0, len(self.a))]
@@ -237,18 +239,16 @@ class TrackingFrequently:
 
 
     def analysis_peak(self):
-        self.x = self.time
-        self.y = self.raw_freq
-        self.c = [math.log10(s) for s in self.raw_val]
         TrackingFrequently.get_click_point(self)
         # print(self.a)
         # print(self.a[0])
         # print(self.a[1])
         tmp_x = [self.a[i][0] for i in range(0, len(self.a))]
         tmp_y = [self.a[i][1] for i in range(0, len(self.a))]
-        tmp_c = [math.log10(self.a[i][2]) for i in range(0, len(self.a))]
+        tmp_c = [math.log10(math.fabs(self.a[i][2])) for i in range(0, len(self.a))]
         tmp_f = []
         plt.scatter(tmp_x, tmp_y, c = tmp_c, cmap='jet')
+        plt.xticks(list(plt.xticks())[0], [ut.mjd2datetime(int(s)).strftime("%y.%m.%d") for s in list(plt.xticks())[0]])
         print("近似曲線")
         for i in range(0, 2):
             self.a_x.append(np.polyfit(tmp_x, tmp_y, i + 1))
@@ -420,6 +420,17 @@ if __name__ == "__main__":
     tf.directory = args[3]  # ファイルを検索するディレクトリ
     tf.oname = args[4]  # 書き出すテキストファイルの名前
     result1 = tf.get_peak_data()
+
+    # tf.x = tf.time
+    # tf.y = tf.raw_freq
+    # tf.c = [math.log10(s) for s in tf.raw_val]
+
+    tf.thresholds_x = 10
+    tf.thresholds_y = 10
+    tf.x = tf.time
+    tf.y = tf.raw_val
+    tf.c = [math.log10(s) for s in tf.raw_freq]
+
     if "-a" in args:  # 最後に-aをつけると計算モード
         result2 = tf.analysis_peak()
     if "-sin" in args:

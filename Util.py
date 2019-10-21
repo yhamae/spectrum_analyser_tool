@@ -117,6 +117,9 @@ def datetime2mjs(t):
     datetime_mjd0 = datetime.datetime(1858,11,17,0,0,0)
     delta = t - datetime_mjd0
     return delta.total_seconds()
+def mjd2datetime(t):
+    return datetime.datetime(1858,11,17,0,0,0) + datetime.timedelta(days=int(t))
+    # return datetime.datetime(1858,11,17,0,0,0) + datetime.datetime(0,0,t, 0, 0, 0)
 
 # def mjd2datetime(mjd):
 #     deltaday = round(mjd,2) - 16140.625 # 2012/08/01 base
