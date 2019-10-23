@@ -32,6 +32,7 @@ class TrackingFrequently:
         self.a = []
         self.b = []
         self.c = []
+        self.d = [1]
         self.peak_freq = []
         self.peak_val = []
         self.args = []
@@ -169,6 +170,7 @@ class TrackingFrequently:
     def get_click_point(self):
         # try:
         plt.scatter(self.x, self.y, c=self.c, cmap='jet')
+        plt.xticks(list(plt.xticks())[0], [ut.mjd2datetime(int(s)).strftime("%y.%m.%d") for s in list(plt.xticks())[0]])
         # x_tics = list(plt.xticks())
         # plt.xticks(list(plt.xticks())[0], [ut.mjd2datetime(int(s)).strftime("%y.%m.%d") for s in list(plt.xticks())[0]])
         plt.colorbar()
@@ -202,6 +204,8 @@ class TrackingFrequently:
                 self.a.append(tmp[j][0:3])
                 plt.scatter(tmp[j][0], tmp[j][1], c = 'Magenta', marker='x')
             del tmp
+
+        plt.scatter([self.a[i][0] for i in range(0, len(self.a))], [self.a[i][0] for i in range(0, len(self.a))], color = 'red', marker = '1')
         
 
         # plt.savefig('fig_test.png')
@@ -210,14 +214,15 @@ class TrackingFrequently:
 
         return True
 
-    def sin_fitting(self):
-        TrackingFrequently.get_click_point(self)
+    def sin_fit(self):
+        # TrackingFrequently.get_click_point(self)
         tmp_x = [self.a[i][0] for i in range(0, len(self.a))]
         tmp_y = [self.a[i][1] for i in range(0, len(self.a))]
-        tmp_c = [math.log10(self.a[i][2]) for i in range(0, len(self.a))]
+        tmp_c = [math.log10(math.fabs(self.a[i][2])) for i in range(0, len(self.a))]
         tmp_f = []
         plt.scatter(tmp_x, tmp_y, c = tmp_c, cmap='jet')
-        x = np.array(tmp_x)
+        # x = np.array(tmp_x)
+        x = np.linspace(min(tmp_x), max(tmp_x))
         y = np.array(tmp_y)
 
         def func1(X, a, b, c, d):
@@ -227,43 +232,66 @@ class TrackingFrequently:
             return np.array(tmp)
 
         popt, pcov = curve_fit(func1,np.array(tmp_x), np.array(tmp_y))
-        print("y = " + str(popt[0])[0:5] + "sin(" + str(popt[1])[0:5] + "x + " + str(popt[2])[0:5] + ") + " + str(popt[3])[0:5])
-        func2 = []
-        # for val in tmp_x:
-        func2.append(func1(tmp_x, popt[0], popt[1], popt[2], popt[3]))
+
+
         # tmp_sin = np.sin()
-        ti = str(popt[0])[0:5] + "sin(" + str(popt[1])[0:5] + "x + " + str(popt[2])[0:5] + ") + " + str(popt[3])[0:5]
-        plt.plot(tmp_x, func1(tmp_x, popt[0], popt[1], popt[2], popt[3]), label = ti)
+        ti = str(np.round(popt[0], decimals=2)) + "$sin($" + str(np.round(popt[1], decimals=2)) + "$x + $" + str(np.round(popt[2], decimals=2)) + "$) + $" + str(np.round(popt[3], decimals=2))[0:5]
+        # print(ti)
+        plt.plot(x, func1(x, popt[0], popt[1], popt[2], popt[3]), label = ti)
         plt.legend()
         plt.show()
 
 
-    def analysis_peak(self):
-        TrackingFrequently.get_click_point(self)
+    def linear_fit(self):
+        # TrackingFrequently.get_click_point(self)
         # print(self.a)
         # print(self.a[0])
         # print(self.a[1])
+        label = []
         tmp_x = [self.a[i][0] for i in range(0, len(self.a))]
         tmp_y = [self.a[i][1] for i in range(0, len(self.a))]
         tmp_c = [math.log10(math.fabs(self.a[i][2])) for i in range(0, len(self.a))]
         tmp_f = []
+        x = np.linspace(min(tmp_x), max(tmp_x))
+        y = np.array(tmp_y)
         plt.scatter(tmp_x, tmp_y, c = tmp_c, cmap='jet')
-        plt.xticks(list(plt.xticks())[0], [ut.mjd2datetime(int(s)).strftime("%y.%m.%d") for s in list(plt.xticks())[0]])
-        print("近似曲線")
-        for i in range(0, 2):
-            self.a_x.append(np.polyfit(tmp_x, tmp_y, i + 1))
-            tmp_f.append(np.poly1d(self.a_x[i])(tmp_x))
-            print(np.poly1d(self.a_x[i]))
-            tmp_label =str(np.poly1d(self.a_x[i]))
-            plt.plot(tmp_x, tmp_f[i], label=tmp_label)
+        
+        # print("近似曲線")
+        for i in self.d:
+            p1 = np.polyfit(np.array(tmp_x), y, i)
+            self.a_x.append(p1)
+            tmp_f.append(np.poly1d(p1)(x))
+            # print(np.poly1d(self.a_x[i]))
+            # tmp_label =str(np.poly1d(self.a_x[i]))
+            
+            # type(p1)
+            p1 = list(p1)
+            # print(p1)
+            tmp_label = ''
+            for j in range(0,i + 1):
+                if j == i:
+                    tmp_label+= str(np.round(p1[j], decimals=2))
+                else:
+                    if i - j != 1:
+                        tmp_var = str('$x^{0}$'.format(i - j))
+                    else:
+                        tmp_var = str('$x$')
+                    tmp_label+= str(np.round(p1[j], decimals=2)) + tmp_var
+                    if p1[j + 1] >= 0:
+                        tmp_label += '+'
+            # print(tmp_label)
+            plt.plot(x, tmp_f[i - 2], label=tmp_label)
+
+            label.append(tmp_label)
         plt.legend()
+        plt.xticks(list(plt.xticks())[0], [ut.mjd2datetime(int(s)).strftime("%y.%m.%d") for s in list(plt.xticks())[0]])
         plt.colorbar()
         plt.show()
 
 
         return True
 
-    def linear_fitting(self):
+    def slide_fit(self):
         cal = CalVariation()
         data_key = list(self.data_index.keys())
         data_key.sort()
@@ -322,6 +350,7 @@ class TrackingFrequently:
             plt.title(data_key[i] + ' --> ' + data_key[i + 1])
             plt.grid(which='major',color='black',linestyle='-')
             plt.grid(which='minor',color='black',linestyle='-')
+            plt.xticks(list(plt.xticks())[0], [ut.mjd2datetime(int(s)).strftime("%y.%m.%d") for s in list(plt.xticks())[0]])
             plt.show()
             
             for k in range(0, len(cal.data)):
@@ -412,6 +441,9 @@ class CalVariation:
 
 if __name__ == "__main__":
     # Usage: Python3 TrackFreq.py 天体名 分子名(H2O, SiOなど) テキストファイルを検索するディレクトリ 書き出すテキストファイルの名前 モード選択("-a"をつけると周波数方向の変化が図れる。付かないと計算しない)
+    
+    # Python3 GitHub/spectrum_analyser_tool/TrackFreq.py IRAS15193+31 H2O /Users/yhamae/OneDrive/astro/FLASHING/peak/ /Users/yhamae/OneDrive/astro/FLASHING/dynamic_spectrum/IRAS15193+31_H20.txt
+
     args = sys.argv
     tf = TrackingFrequently()
     tf.source_keywoed = args[1] + "_" + args[2] + "_"
@@ -431,106 +463,113 @@ if __name__ == "__main__":
     tf.y = tf.raw_val
     tf.c = [math.log10(s) for s in tf.raw_freq]
 
-    if "-a" in args:  # 最後に-aをつけると計算モード
-        result2 = tf.analysis_peak()
-    if "-sin" in args:
-        result2 = tf.sin_fitting()
-    if "-c" in args:  # 
-        cal = CalVariation()
-        data_key = list(tf.data_index.keys())
-        data_key.sort()
+    result2 = tf.get_click_point()
+    print("get_peak_data() -->" + str(result1))
+    print("get_click_point() -->" + str(result2))
+    print("--------------------")
+    print(tf.a)
+
+
+    # if "-a" in args:  # 最後に-aをつけると計算モード
+    #     result2 = tf.analysis_peak()
+    # if "-sin" in args:
+    #     result2 = tf.sin_fitting()
+    # if "-c" in args:  # 
+    #     cal = CalVariation()
+    #     data_key = list(tf.data_index.keys())
+    #     data_key.sort()
         
-        print(data_key)
+    #     print(data_key)
 
-        # splot = plt.figure(figsize=(20,20))
+    #     # splot = plt.figure(figsize=(20,20))
 
-        for i in range(0, len(data_key) - 1):
-            cal = CalVariation()
-            max_channel = 2048
-            range_pm = 15
-            range_max = range_pm
-            range_min = -1 * range_pm
-            a = [0] * max_channel
-            b = [0] * max_channel
-            x = [0] * (range_max - range_min + 1)
-            y = [0] * (range_max - range_min + 1)
-            # ut.chkprint(len(tf.rawdata))
-            for j in range(0, len(tf.rawdata)):
-                # index_num = 
-                if int(tf.rawdata[j][1]) < max_channel:
-                    # if int(tf.rawdata[j][1]) <= 1122:
-                    if int(tf.rawdata[j][2]) >= 0:
-                        tmp = int(tf.rawdata[j][1])
-                    else:
-                        tmp = 2048 - int(tf.rawdata[j][1])
-                    if float(tf.rawdata[j][0]) == float(data_key[i]):
-                        # print("!")
-                        # ut.chkprint(tf.rawdata[i][3])
-                        a[tmp] += float(tf.rawdata[j][3])
-                        a[int(tf.rawdata[j][1])] = 1
-                    if float(tf.rawdata[j][0]) == float(data_key[i + 1]):
-                        # ut.chkprint(tf.rawdata[i][3])
-                        b[tmp] += float(tf.rawdata[j][3])
-                        b[int(tf.rawdata[j][1])] = 1
-            # ut.chkprint(a, b)
-            # print("date", end = ": ")
-            # print((float(data_key[i + 1]) - float(data_key[i])))
-            d = cal.minimum_difference(a, b, (float(data_key[i + 1]) - float(data_key[i])), range_min, range_max)
-            delta_x = float(data_key[i + 1]) - float(data_key[i])
-            # plt.figure()
+    #     for i in range(0, len(data_key) - 1):
+    #         cal = CalVariation()
+    #         max_channel = 2048
+    #         range_pm = 15
+    #         range_max = range_pm
+    #         range_min = -1 * range_pm
+    #         a = [0] * max_channel
+    #         b = [0] * max_channel
+    #         x = [0] * (range_max - range_min + 1)
+    #         y = [0] * (range_max - range_min + 1)
+    #         # ut.chkprint(len(tf.rawdata))
+    #         for j in range(0, len(tf.rawdata)):
+    #             # index_num = 
+    #             if int(tf.rawdata[j][1]) < max_channel:
+    #                 # if int(tf.rawdata[j][1]) <= 1122:
+    #                 if int(tf.rawdata[j][2]) >= 0:
+    #                     tmp = int(tf.rawdata[j][1])
+    #                 else:
+    #                     tmp = 2048 - int(tf.rawdata[j][1])
+    #                 if float(tf.rawdata[j][0]) == float(data_key[i]):
+    #                     # print("!")
+    #                     # ut.chkprint(tf.rawdata[i][3])
+    #                     a[tmp] += float(tf.rawdata[j][3])
+    #                     a[int(tf.rawdata[j][1])] = 1
+    #                 if float(tf.rawdata[j][0]) == float(data_key[i + 1]):
+    #                     # ut.chkprint(tf.rawdata[i][3])
+    #                     b[tmp] += float(tf.rawdata[j][3])
+    #                     b[int(tf.rawdata[j][1])] = 1
+    #         # ut.chkprint(a, b)
+    #         # print("date", end = ": ")
+    #         # print((float(data_key[i + 1]) - float(data_key[i])))
+    #         d = cal.minimum_difference(a, b, (float(data_key[i + 1]) - float(data_key[i])), range_min, range_max)
+    #         delta_x = float(data_key[i + 1]) - float(data_key[i])
+    #         # plt.figure()
 
-            # ax = splot.add_subplot(len(data_key), 1, i + 1)
+    #         # ax = splot.add_subplot(len(data_key), 1, i + 1)
             
-            # ax = splot.add_subplot(2, 1, 1)
+    #         # ax = splot.add_subplot(2, 1, 1)
 
 
-            # sns.lineplot(x = [cal.data[i][0]for i in range(0, len(cal.data))], y =  [cal.data[i][1] for i in range(0, len(cal.data))], ax = ax)
+    #         # sns.lineplot(x = [cal.data[i][0]for i in range(0, len(cal.data))], y =  [cal.data[i][1] for i in range(0, len(cal.data))], ax = ax)
 
 
 
 
-            ut.chkprint(delta_x)
-            plt.plot([cal.data[i][0]for i in range(0, len(cal.data))], [cal.data[i][1] for i in range(0, len(cal.data))])
-            plt.title(data_key[i] + ' --> ' + data_key[i + 1])
-            plt.grid(which='major',color='black',linestyle='-')
-            plt.grid(which='minor',color='black',linestyle='-')
-            plt.show()
+    #         ut.chkprint(delta_x)
+    #         plt.plot([cal.data[i][0]for i in range(0, len(cal.data))], [cal.data[i][1] for i in range(0, len(cal.data))])
+    #         plt.title(data_key[i] + ' --> ' + data_key[i + 1])
+    #         plt.grid(which='major',color='black',linestyle='-')
+    #         plt.grid(which='minor',color='black',linestyle='-')
+    #         plt.show()
             
-            for k in range(0, len(cal.data)):
-                y[k] += cal.data[k][1] * 365.25 / delta_x
-                x[k] = cal.data[k][0]
-            for k in range(0, (range_max - range_min + 1)):
-                if  y[k] == 0 and x[k] == 0:
-                    x.pop(k)
-                    y.pop(k)
+    #         for k in range(0, len(cal.data)):
+    #             y[k] += cal.data[k][1] * 365.25 / delta_x
+    #             x[k] = cal.data[k][0]
+    #         for k in range(0, (range_max - range_min + 1)):
+    #             if  y[k] == 0 and x[k] == 0:
+    #                 x.pop(k)
+    #                 y.pop(k)
 
 
-            ut.chkprint(d)
+    #         ut.chkprint(d)
 
 
-        # plt.show()
-        # ax = splot.add_subplot(len(data_key), 1, len(data_key))
-        # ax = splot.add_subplot(2, 1, 2)
-        # sns.lineplot(x = x, y = y, ax = ax)
+    #     # plt.show()
+    #     # ax = splot.add_subplot(len(data_key), 1, len(data_key))
+    #     # ax = splot.add_subplot(2, 1, 2)
+    #     # sns.lineplot(x = x, y = y, ax = ax)
         
-        plt.plot(x, y)
-        plt.grid(which='major',color='black',linestyle='-')
-        plt.grid(which='minor',color='black',linestyle='-')
-        plt.title('all')
-        plt.legend()
-        plt.show()
+    #     plt.plot(x, y)
+    #     plt.grid(which='major',color='black',linestyle='-')
+    #     plt.grid(which='minor',color='black',linestyle='-')
+    #     plt.title('all')
+    #     plt.legend()
+    #     plt.show()
         
 
 
 
-        result2 = True
-    else:
-        result2 = True
-    if result1 and result2:
-        print(ut.pycolor.GREEN + "------------------------------")
-        print("Program has correctly finished")
-        print("------------------------------" + ut.pycolor.END)
-    else:
-        print(ut.pycolor.RED + "--------------------------------")
-        print("Program has incorrectly finished")
-        print("--------------------------------" + ut.pycolor.END)
+    #     result2 = True
+    # else:
+    #     result2 = True
+    # if result1 and result2:
+    #     print(ut.pycolor.GREEN + "------------------------------")
+    #     print("Program has correctly finished")
+    #     print("------------------------------" + ut.pycolor.END)
+    # else:
+    #     print(ut.pycolor.RED + "--------------------------------")
+    #     print("Program has incorrectly finished")
+    #     print("--------------------------------" + ut.pycolor.END)
