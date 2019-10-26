@@ -56,6 +56,7 @@ class TrackingFrequently:
         self.plottype = "eps"
         self.ref_freq = "H2O"
         self.aperture_efficiency = {"H22":0.61, "H40":0.55}
+        self.ini = [0, 0, 0, 0, 0]
 
 
     # def get_parameter_by_args(self):
@@ -216,7 +217,7 @@ class TrackingFrequently:
 
     def sin_fit(self):
         # TrackingFrequently.get_click_point(self)
-        tmp_x = [self.a[i][0] for i in range(0, len(self.a))]
+        tmp_x = [self.a[i][0]/1000 for i in range(0, len(self.a))]
         tmp_y = [self.a[i][1] for i in range(0, len(self.a))]
         tmp_c = [math.log10(math.fabs(self.a[i][2])) for i in range(0, len(self.a))]
         tmp_f = []
@@ -224,13 +225,18 @@ class TrackingFrequently:
         # x = np.array(tmp_x)
         x = np.linspace(min(tmp_x), max(tmp_x))
         y = np.array(tmp_y)
+        # print(x)
+
+
 
         def func1(X, a, b, c, d):
             tmp = []
             for val in X:
-                tmp.append(float(a) * math.sin(float(b) * float(val) + float(c)) + float(d))
+                # tmp.append(float(a) * math.sin(float(b) * float(val) + float(c)) + float(d))
+                tmp.append(a * math.sin(b * val + c) + d)
             return np.array(tmp)
 
+        # popt, pcov = curve_fit(func1,np.array(tmp_x), np.array(tmp_y), p0 = self.ini)
         popt, pcov = curve_fit(func1,np.array(tmp_x), np.array(tmp_y))
 
 
@@ -261,7 +267,7 @@ class TrackingFrequently:
             p1 = np.polyfit(np.array(tmp_x), y, i)
             self.a_x.append(p1)
             tmp_f.append(np.poly1d(p1)(x))
-            # print(np.poly1d(self.a_x[i]))
+            # print(np.poly1d(selfっ.a_x[i]))
             # tmp_label =str(np.poly1d(self.a_x[i]))
             
             # type(p1)
