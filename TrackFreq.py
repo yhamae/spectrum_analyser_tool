@@ -57,6 +57,7 @@ class TrackingFrequently:
         self.ref_freq = "H2O"
         self.aperture_efficiency = {"H22":0.61, "H40":0.55}
         self.ini = [0, 0, 0, 0, 0]
+        self.print_load_data = True
 
 
     # def get_parameter_by_args(self):
@@ -69,8 +70,9 @@ class TrackingFrequently:
                 self.flist.append(self.directory + data)
         if self.debag:
             ut.chkprint2("self.flist", self.flist)
-        print(">>> Load Data")
-        print('- ' + '\n- '.join(self.flist))
+        if self.print_load_data:
+            print(">>> Load Data")
+            print('- ' + '\n- '.join(self.flist))
         
 
 
@@ -463,17 +465,17 @@ if __name__ == "__main__":
     # tf.y = tf.raw_freq
     # tf.c = [math.log10(s) for s in tf.raw_val]
 
-    tf.thresholds_x = 10
-    tf.thresholds_y = 10
-    tf.x = tf.time
-    tf.y = tf.raw_val
-    tf.c = [math.log10(s) for s in tf.raw_freq]
+    # tf.thresholds_x = 10
+    # tf.thresholds_y = 10
+    # tf.x = tf.time
+    # tf.y = tf.raw_val
+    # tf.c = [math.log10(s) for s in tf.raw_freq]
 
-    result2 = tf.get_click_point()
-    print("get_peak_data() -->" + str(result1))
-    print("get_click_point() -->" + str(result2))
-    print("--------------------")
-    print(tf.a)
+    # result2 = tf.get_click_point()
+    # print("get_peak_data() -->" + str(result1))
+    # print("get_click_point() -->" + str(result2))
+    # print("--------------------")
+    # print(tf.a)
 
 
     # if "-a" in args:  # 最後に-aをつけると計算モード
