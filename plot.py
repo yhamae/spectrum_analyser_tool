@@ -4,6 +4,7 @@ import os
 import statistics
 import seaborn as sns
 import numpy as np
+import Util as ut
 # import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -70,7 +71,7 @@ class MyPlot:
 
         plt.scatter(self.x1, self.y1, c=self.c, cmap='jet', s = 10)
         plt.title(os.path.splitext(self.fname)[0])
-        plt.xlabel(self.x_label)
+        plt.xlabel("date (yy.mm.dd)\nMJD [day]")
         plt.ylabel(self.y_label)
         # plt.set_clim(min(self.c), max(self.c))
         # plt.imshow(self.c)
@@ -78,6 +79,7 @@ class MyPlot:
         # plt.legend()
         cbar = plt.colorbar()
         cbar.set_label(self.clabel)
+        plt.xticks(list(plt.xticks())[0], [ut.mjd2datetime(int(s)).strftime("%y.%m.%d") + '\n' + str(s) for s in list(plt.xticks())[0]])
         # plt.show()
         plt.savefig(self.fname, bbox_inches = 'tight')
         plt.close()

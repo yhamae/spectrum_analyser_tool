@@ -5,12 +5,14 @@ import traceback
 import subprocess
 import math
 
+import pandas as pd
 from scipy import constants
 from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit 
 import seaborn as sns
+from sklearn.metrics import r2_score
 sns.set() 
 # %matplotlib inline
 
@@ -27,6 +29,7 @@ class TrackingFrequently:
         self.directory = ""
         self.date = []
         self.array = []
+        self.maxfev = 1000
         self.x = []
         self.y = []
         self.a = []
@@ -56,7 +59,7 @@ class TrackingFrequently:
         self.plottype = "eps"
         self.ref_freq = "H2O"
         self.aperture_efficiency = {"H22":0.61, "H40":0.55}
-        self.ini = [0, 0, 0, 0, 0]
+        self.ini = [1,1,1,1]
         self.print_load_data = True
 
 
@@ -160,7 +163,6 @@ class TrackingFrequently:
         # pl.c = tmp_raw_val_log10
         # pl.clabel = "Antenna temperature (Common logarithms)"
         pl.y_label = "LSR[km/s]"
-        pl.x_label = "MJD[day]"
         pl.title = self.source + " " + self.ref_freq
         pl.fname = os.path.splitext(self.oname)[0] + "." + self.plottype
         pl.freq_tracking_plot()
@@ -219,14 +221,14 @@ class TrackingFrequently:
 
     def sin_fit(self):
         # TrackingFrequently.get_click_point(self)
-        tmp_x = [self.a[i][0]/1000 for i in range(0, len(self.a))]
+        tmp_x = [self.a[i][0] for i in range(0, len(self.a))]
         tmp_y = [self.a[i][1] for i in range(0, len(self.a))]
-        tmp_c = [math.log10(math.fabs(self.a[i][2])) for i in range(0, len(self.a))]
-        tmp_f = []
-        plt.scatter(tmp_x, tmp_y, c = tmp_c, cmap='jet')
+        # tmp_c = [math.log10(math.fabs(self.a[i][2])) for i in range(0, len(self.a))]
+        # tmp_f = []
+        # plt.scatter(tmp_x, tmp_y, c = tmp_c, cmap='jet')
         # x = np.array(tmp_x)
         x = np.linspace(min(tmp_x), max(tmp_x))
-        y = np.array(tmp_y)
+        # y = np.array(tmp_y)
         # print(x)
 
 
@@ -235,19 +237,28 @@ class TrackingFrequently:
             tmp = []
             for val in X:
                 # tmp.append(float(a) * math.sin(float(b) * float(val) + float(c)) + float(d))
-                tmp.append(a * math.sin(b * val + c) + d)
+                tmp.append(a * math.sin(val * 2 * math.pi / b + c) + d)
             return np.array(tmp)
 
-        # popt, pcov = curve_fit(func1,np.array(tmp_x), np.array(tmp_y), p0 = self.ini)
-        popt, pcov = curve_fit(func1,np.array(tmp_x), np.array(tmp_y))
+        popt, pcov = curve_fit(func1,np.array(tmp_x), np.array(tmp_y), p0 = self.ini, maxfev = self.maxfev)
+        # popt, pcov = curve_fit(func1,np.array(tmp_x), np.array(tmp_y))
 
 
         # tmp_sin = np.sin()
-        ti = str(np.round(popt[0], decimals=2)) + "$sin($" + str(np.round(popt[1], decimals=2)) + "$x + $" + str(np.round(popt[2], decimals=2)) + "$) + $" + str(np.round(popt[3], decimals=2))[0:5]
+        ti = '$' + 'f_{(x)} = ' + str(np.round(popt[0], decimals=2)) + "sin(\\frac{2\\pi}{" + str(np.round(popt[1], decimals=2)) + "}x + " + str(np.round(popt[2], decimals=2)) + ") + " + str(np.round(popt[3], decimals=2)) + '$'
         # print(ti)
-        plt.plot(x, func1(x, popt[0], popt[1], popt[2], popt[3]), label = ti)
-        plt.legend()
-        plt.show()
+        # plt.plot(x, func1(x, popt[0], popt[1], popt[2], popt[3]), label = ti)
+        # plt.legend()
+        # plt.show()
+
+        # s1=pd.Series(tmp_y)
+        # s2=pd.Series(list(func1(tmp_x, popt[0], popt[1], popt[2], popt[3])))
+
+        # # pandasを使用してPearson's rを計算
+        # res=s1.corr(s2)   # numpy.float64 に格納される
+        res = r2_score(tmp_y, list(func1(tmp_x, popt[0], popt[1], popt[2], popt[3])))
+
+        return x, func1(x, popt[0], popt[1], popt[2], popt[3]), ti, popt[0], popt[1], popt[2], popt[3], res
 
 
     def linear_fit(self):
@@ -258,11 +269,13 @@ class TrackingFrequently:
         label = []
         tmp_x = [self.a[i][0] for i in range(0, len(self.a))]
         tmp_y = [self.a[i][1] for i in range(0, len(self.a))]
-        tmp_c = [math.log10(math.fabs(self.a[i][2])) for i in range(0, len(self.a))]
+        # tmp_c = [math.log10(math.fabs(self.a[i][2])) for i in range(0, len(self.a))]
         tmp_f = []
         x = np.linspace(min(tmp_x), max(tmp_x))
         y = np.array(tmp_y)
-        plt.scatter(tmp_x, tmp_y, c = tmp_c, cmap='jet')
+        # plt.scatter(tmp_x, tmp_y, c = tmp_c, cmap='jet')
+        ylist = []
+        labels = []
         
         # print("近似曲線")
         for i in self.d:
@@ -288,16 +301,18 @@ class TrackingFrequently:
                     if p1[j + 1] >= 0:
                         tmp_label += '+'
             # print(tmp_label)
-            plt.plot(x, tmp_f[i - 2], label=tmp_label)
+            ylist.append(np.poly1d(p1)(x))
+            # plt.plot(x, , label=)
+            labels.append(tmp_label)
 
             label.append(tmp_label)
-        plt.legend()
-        plt.xticks(list(plt.xticks())[0], [ut.mjd2datetime(int(s)).strftime("%y.%m.%d") for s in list(plt.xticks())[0]])
-        plt.colorbar()
-        plt.show()
+        # plt.legend()
+        # plt.xticks(list(plt.xticks())[0], [ut.mjd2datetime(int(s)).strftime("%y.%m.%d") for s in list(plt.xticks())[0]])
+        # plt.colorbar()
+        # plt.show()
 
 
-        return True
+        return x, np.poly1d(p1)(x), labels
 
     def slide_fit(self):
         cal = CalVariation()
