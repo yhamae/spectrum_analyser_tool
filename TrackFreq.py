@@ -61,6 +61,9 @@ class TrackingFrequently:
         self.aperture_efficiency = {"H22":0.61, "H40":0.55}
         self.ini = [1,1,1,1]
         self.print_load_data = True
+        self.uselim = False
+        self.ymin = 0
+        self.ymax = 0
 
 
     # def get_parameter_by_args(self):
@@ -156,6 +159,10 @@ class TrackingFrequently:
         pl.data = np.array(self.rawdata)
         pl.x1 = self.time
         pl.y1 = self.raw_freq
+        pl.uselim = self.uselim
+        if pl.uselim:
+            pl.ymin = self.ymin
+            pl.ymax = self.ymax
         # フラックス密度
         pl.c = tmp_val
         pl.clabel = "Flux density (Common logarithms)"
@@ -469,15 +476,22 @@ if __name__ == "__main__":
 
     args = sys.argv
     tf = TrackingFrequently()
-    tf.source_keywoed = args[1] + "_" + args[2] + "_"
-    tf.source = args[1]  # 天体名
-    tf.ref_freq = args[2]  # 分子名（H2O,SiOなど）
-    tf.directory = args[3]  # ファイルを検索するディレクトリ
-    tf.oname = args[4]  # 書き出すテキストファイルの名前
-    result1 = tf.get_peak_data()
+    # tf.source_keywoed = args[1] + "_" + args[2] + "_"
+    tf.source = 'IRAS18286-09'  # 天体名
+    tf.ref_freq = 'H2O'  # 分子名（H2O,SiOなど）
+    tf.directory = '/Users/yhamae/OneDrive/astro/FLASHING/peak/'  # ファイルを検索するディレクトリ
+    tf.oname = '/Users/yhamae/OneDrive/astro/FLASHING/dynamic_spectrum/IRAS18286-09_H20.txt'  # 書き出すテキストファイルの名前
+    tf.source_keywoed = tf.source + "_" + tf.ref_freq + "_"
+    tf.get_peak_data()
+    tf.x = tf.time
+    tf.y = tf.raw_freq
+    tf.c = [math.log10(s) for s in tf.raw_val]
+    tf.get_click_point()
+    print(tf.a)
 
     # tf.x = tf.time
-    # tf.y = tf.raw_freq
+    # tf.y = t
+    # f.raw_freq
     # tf.c = [math.log10(s) for s in tf.raw_val]
 
     # tf.thresholds_x = 10

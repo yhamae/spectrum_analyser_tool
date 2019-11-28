@@ -32,10 +32,13 @@ class MyPlot:
         self.data = []
         self.errx = []
         self.erry = []
+        self.ymin = 0
+        self.ymax = 0
         self.xrange = []
         self.yrange = []
         self.clabel = ""
         self.c = []
+        self.uselim = False
         self.fontsize = 5
         self.ii = 0
     def ExpPlot(self):
@@ -68,11 +71,14 @@ class MyPlot:
         # sns.set()
         # sns.heatmap(self.data, annot=True)
 
-
+        if self.uselim:
+            plt.ylim(self.ymin,self.ymax)
+        # print('aaa')
         plt.scatter(self.x1, self.y1, c=self.c, cmap='jet', s = 10)
         plt.title(os.path.splitext(self.fname)[0])
         plt.xlabel("date (yy.mm.dd)\nMJD [day]")
         plt.ylabel(self.y_label)
+
         # plt.set_clim(min(self.c), max(self.c))
         # plt.imshow(self.c)
         plt.title(self.title)
