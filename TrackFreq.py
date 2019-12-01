@@ -477,11 +477,12 @@ if __name__ == "__main__":
     args = sys.argv
     tf = TrackingFrequently()
     # tf.source_keywoed = args[1] + "_" + args[2] + "_"
-    tf.source = 'IRAS18286-09'  # 天体名
+    tf.source = 'IRAS15193+31'  # 天体名
     tf.ref_freq = 'H2O'  # 分子名（H2O,SiOなど）
     tf.directory = '/Users/yhamae/OneDrive/astro/FLASHING/peak/'  # ファイルを検索するディレクトリ
-    tf.oname = '/Users/yhamae/OneDrive/astro/FLASHING/dynamic_spectrum/IRAS18286-09_H20.txt'  # 書き出すテキストファイルの名前
+    tf.oname = '/Users/yhamae/OneDrive/astro/FLASHING/dynamic_spectrum/IRAS15193+31_H20.txt'  # 書き出すテキストファイルの名前
     tf.source_keywoed = tf.source + "_" + tf.ref_freq + "_"
+    tf.print_load_data = False
     tf.get_peak_data()
     tf.x = tf.time
     tf.y = tf.raw_freq
