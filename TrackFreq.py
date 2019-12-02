@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit 
 import seaborn as sns
 from sklearn.metrics import r2_score
+import pandas as pd
 sns.set() 
 # %matplotlib inline
 
@@ -177,6 +178,10 @@ class TrackingFrequently:
 
 
         return True
+
+    def load_data(self, filename):
+        df = pd.read_csv(filename, sep='    ', header=6)
+        print(df.head())
 
 
     def get_click_point(self):

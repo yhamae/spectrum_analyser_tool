@@ -21,6 +21,7 @@ class GetSpectrum:
         self.MJD = 0
         self.min = -50
         self.object_name = "N/A"
+        self.data = []
 
 
 
@@ -86,6 +87,35 @@ class GetSpectrum:
         if self.date != "N/A" and self.MJD != "N/A" and self.object_name != "N/A":
             return True
         else :return False
+
+
+    def load_file(filename):
+        tmp_data = []
+        try:
+            with codecs.open(filename, 'r', 'utf-8', 'ignore') as f:
+                line = f.readlines()
+            for tmp in line:
+                if tmp[0] != "#" and tmp[0] != "\n":
+                    tmp_data.append(tmp.split())
+                    
+            # for i in range(0, len(line)):
+            #     if line[i][0] != "#"
+            #         tmp = line[i].split()
+            #         self.peak_freq.append(tmp[1])
+            #         self.peak_val.append(tmp[2])
+                    # if 's' in self.mode:
+                    #     util.chkprint(tmp[2], tmp[3])
+            return tmp_data
+        except FileNotFoundError as e:
+            print(self.filename + ": No such file or directory")
+            return False
+
+
+
+
+
+
+
 class GetPeak:
     def __init__(self):
         self.peak_freq = []

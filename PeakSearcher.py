@@ -270,7 +270,7 @@ class PeakSearch:
 
                     if not self.directory == "":
 
-                        plotpeak.fname = self.plotname + os.path.splitext(tmp2)[0] + '.eps'
+                        plotpeak.fname = self.plotname + os.path.splitext(tmp2)[0] + '.png'
                         
                     else:
                         plotpeak.fname = self.plotname
