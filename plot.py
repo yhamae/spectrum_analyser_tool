@@ -125,4 +125,16 @@ class MyPlot:
 
 
 
-
+# スムージング用ヒストグラム
+# fig = plt.figure(figsize=(6,8))
+# ax1 = fig.add_subplot(111)
+# atca_hist = ax1.hist(atb_, bins=20, histtype="step",color='black',linewidth=2,label='ATCA')
+# model_hist = ax1.hist(msb_, bins=20,histtype='step',  color='blue',label='MODEL',linestyle='-.',linewidth=1.5)
+# ax1.set_xlabel('Latitude (b)',fontsize=15)
+# ax1.set_ylabel('Number of maser sources ',fontsize=15)
+# plt.legend()
+# plt.text(-2.1,35, r'${\rm R=19 kpc} $',fontsize=15,color='black')
+# plt.text(-2.1,33, r'${\rm Scale \,height=200 pc} $',fontsize=15,color='black')
+# plt.tick_params(labelsize=12)
+# plt.savefig('../../Fig5.eps',dpi=300, transparent='true')
+# plt.show()

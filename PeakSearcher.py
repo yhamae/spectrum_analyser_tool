@@ -70,13 +70,15 @@ class PeakSearch:
             print(self.err_message)
             print(self.usage)
             return False
+    def set_prm(self):
 
         if not self.directory == "": # -aオプションを使った場合
             # self.outflist = []
             self.filelist = os.listdir(self.directory)
             if not self.outfile == "":
                 for i in range(0, len(self.filelist)):
-                    self.outflist.append(self.outfile + os.path.splitext(self.filelist[i])[0] + '.txt')
+                    if os.path.splitext(self.filelist[i])[0] != '':
+                        self.outflist.append(self.outfile + os.path.splitext(self.filelist[i])[0] + '.txt')
 
         else : # -aオプションを使う場合
             self.filelist.append(self.filename)
@@ -149,10 +151,10 @@ class PeakSearch:
                 maser.z = T
                 maser.peak = []
                 maser.snr = self.snr * 1.5
-                maser.width = self.width
+                maser.width = 1
                 maser.mode = self.mode
                 maser.iteration = self.iteration
-                maser.width2 = self.width2
+                maser.width2 = 1
                 self.result.append(maser.find())
                 maser.z = []
                 
@@ -270,7 +272,7 @@ class PeakSearch:
 
                     if not self.directory == "":
 
-                        plotpeak.fname = self.plotname + os.path.splitext(tmp2)[0] + '.png'
+                        plotpeak.fname = self.plotname + os.path.splitext(tmp2)[0] + '.pdf'
                         
                     else:
                         plotpeak.fname = self.plotname
@@ -322,6 +324,13 @@ if __name__ == "__main__":
     p = PeakSearch()
     p.args = sys.argv
     p.get_parameter_by_args()
+#     p.outfile = './peak/'
+#     p.snr = 4
+#     p.width = 1
+#     p.width2 = 0
+#     p.directory = './spectrum/'
+#     p.plotname = './plot/'
+    p.set_prm()
     if p.find_peak():
         print("------------------------------")
         print("Program has correctly finished")

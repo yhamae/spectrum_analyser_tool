@@ -7,7 +7,7 @@ import math
 
 import pandas as pd
 from scipy import constants
-from tqdm import tqdm
+# from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit 
@@ -17,7 +17,7 @@ import pandas as pd
 sns.set() 
 # %matplotlib inline
 
-import PeakSearcher
+# import PeakSearcher
 import Util as ut
 import DataLoader
 import plot
@@ -47,6 +47,7 @@ class TrackingFrequently:
         self.data_index = {}
         self.header_line = 10
         self.oname = ""
+        self.plot_flag = True
         self.source_keywoed = ""
         self.reciver = "H22"
         self.rawdata = []
@@ -57,7 +58,7 @@ class TrackingFrequently:
         self.thresholds_y = 2
         self.a_x = []
         self.r_ant = 45
-        self.plottype = "eps"
+        self.plottype = "pdf"
         self.ref_freq = "H2O"
         self.aperture_efficiency = {"H22":0.61, "H40":0.55}
         self.ini = [1,1,1,1]
@@ -155,25 +156,25 @@ class TrackingFrequently:
 
         ut.export_data(self.oname, header, self.time, self.raw_freq, self.raw_val, tmp_raw_val)
 
-
-        pl = plot.MyPlot()
-        pl.data = np.array(self.rawdata)
-        pl.x1 = self.time
-        pl.y1 = self.raw_freq
-        pl.uselim = self.uselim
-        if pl.uselim:
-            pl.ymin = self.ymin
-            pl.ymax = self.ymax
-        # フラックス密度
-        pl.c = tmp_val
-        pl.clabel = "Flux density (Common logarithms)"
-        # アンテナ温度
-        # pl.c = tmp_raw_val_log10
-        # pl.clabel = "Antenna temperature (Common logarithms)"
-        pl.y_label = "LSR[km/s]"
-        pl.title = self.source + " " + self.ref_freq
-        pl.fname = os.path.splitext(self.oname)[0] + "." + self.plottype
-        pl.freq_tracking_plot()
+        if self.plot_flag:
+            pl = plot.MyPlot()
+            pl.data = np.array(self.rawdata)
+            pl.x1 = self.time
+            pl.y1 = self.raw_freq
+            pl.uselim = self.uselim
+            if pl.uselim:
+                pl.ymin = self.ymin
+                pl.ymax = self.ymax
+            # フラックス密度
+            pl.c = tmp_val
+            pl.clabel = "Flux density (Common logarithms)"
+            # アンテナ温度
+            # pl.c = tmp_raw_val_log10
+            # pl.clabel = "Antenna temperature (Common logarithms)"
+            pl.y_label = "LSR[km/s]"
+            pl.title = self.source + " " + self.ref_freq
+            pl.fname = os.path.splitext(self.oname)[0] + "." + self.plottype
+            pl.freq_tracking_plot()
 
 
 
@@ -185,11 +186,8 @@ class TrackingFrequently:
 
 
     def get_click_point(self):
-        # try:
         plt.scatter(self.x, self.y, c=self.c, cmap='jet')
         plt.xticks(list(plt.xticks())[0], [ut.mjd2datetime(int(s)).strftime("%y.%m.%d") for s in list(plt.xticks())[0]])
-        # x_tics = list(plt.xticks())
-        # plt.xticks(list(plt.xticks())[0], [ut.mjd2datetime(int(s)).strftime("%y.%m.%d") for s in list(plt.xticks())[0]])
         plt.colorbar()
 
         a = plt.ginput(n=-1, mouse_add=1, mouse_pop=2, mouse_stop=3, timeout = 600)
@@ -197,8 +195,6 @@ class TrackingFrequently:
         # mouse_addで座標を取得（左クリック）
         # mouse_popでUndo（右クリック）
         # mouse_stopでインプットを終了する（ミドルクリック）
-        # print("click coordinate is berrow")
-        # print(a)
         
         for c, d in a:
             tmp = []
@@ -232,74 +228,72 @@ class TrackingFrequently:
         return True
 
     def sin_fit(self):
-        # TrackingFrequently.get_click_point(self)
+        '''
+        Parameters
+        ----------
+        self.a[i][0]: x
+        self.a[i][1]: y
+        self.ini: initialized parameter(default = [1,1,1,1])
+        self.maxdev: maximum of iteration
+        Returns
+        -------
+        x: x
+        func(): y(fitting result)
+        ti: label
+        popt[0:3]: 
+        res: r2 score
+        '''
         tmp_x = [self.a[i][0] for i in range(0, len(self.a))]
         tmp_y = [self.a[i][1] for i in range(0, len(self.a))]
-        # tmp_c = [math.log10(math.fabs(self.a[i][2])) for i in range(0, len(self.a))]
-        # tmp_f = []
-        # plt.scatter(tmp_x, tmp_y, c = tmp_c, cmap='jet')
-        # x = np.array(tmp_x)
         x = np.linspace(min(tmp_x), max(tmp_x))
-        # y = np.array(tmp_y)
-        # print(x)
 
 
 
         def func1(X, a, b, c, d):
             tmp = []
             for val in X:
-                # tmp.append(float(a) * math.sin(float(b) * float(val) + float(c)) + float(d))
                 tmp.append(a * math.sin(val * 2 * math.pi / b + c) + d)
             return np.array(tmp)
-
+        
         popt, pcov = curve_fit(func1,np.array(tmp_x), np.array(tmp_y), p0 = self.ini, maxfev = self.maxfev)
-        # popt, pcov = curve_fit(func1,np.array(tmp_x), np.array(tmp_y))
 
-
-        # tmp_sin = np.sin()
         ti = '$' + 'f_{(x)} = ' + str(np.round(popt[0], decimals=2)) + "sin(\\frac{2\\pi}{" + str(np.round(popt[1], decimals=2)) + "}x + " + str(np.round(popt[2], decimals=2)) + ") + " + str(np.round(popt[3], decimals=2)) + '$'
-        # print(ti)
-        # plt.plot(x, func1(x, popt[0], popt[1], popt[2], popt[3]), label = ti)
-        # plt.legend()
-        # plt.show()
-
-        # s1=pd.Series(tmp_y)
-        # s2=pd.Series(list(func1(tmp_x, popt[0], popt[1], popt[2], popt[3])))
-
-        # # pandasを使用してPearson's rを計算
-        # res=s1.corr(s2)   # numpy.float64 に格納される
         res = r2_score(tmp_y, list(func1(tmp_x, popt[0], popt[1], popt[2], popt[3])))
 
         return x, func1(x, popt[0], popt[1], popt[2], popt[3]), ti, popt[0], popt[1], popt[2], popt[3], res
 
 
     def linear_fit(self):
-        # TrackingFrequently.get_click_point(self)
-        # print(self.a)
-        # print(self.a[0])
-        # print(self.a[1])
+        '''
+        Parameters
+        ----------
+        self.a[i][0]: x val
+        self.a[i][1]: y val
+        self.d: 何次か
+        Returns
+        -------
+        x: x val
+        np.poly1d(p1)(x): y val
+        labels: label
+        p1: result
+        '''
         label = []
         tmp_x = [self.a[i][0] for i in range(0, len(self.a))]
         tmp_y = [self.a[i][1] for i in range(0, len(self.a))]
-        # tmp_c = [math.log10(math.fabs(self.a[i][2])) for i in range(0, len(self.a))]
         tmp_f = []
         x = np.linspace(min(tmp_x), max(tmp_x))
         y = np.array(tmp_y)
-        # plt.scatter(tmp_x, tmp_y, c = tmp_c, cmap='jet')
         ylist = []
         labels = []
         
-        # print("近似曲線")
+        xres = []
+        r2 = []
         for i in self.d:
-            p1 = np.polyfit(np.array(tmp_x), y, i)
+            p1 = np.polyfit(np.array(tmp_x), np.array(y), i)
             self.a_x.append(p1)
             tmp_f.append(np.poly1d(p1)(x))
-            # print(np.poly1d(selfっ.a_x[i]))
-            # tmp_label =str(np.poly1d(self.a_x[i]))
-            
-            # type(p1)
+
             p1 = list(p1)
-            # print(p1)
             tmp_label = ''
             for j in range(0,i + 1):
                 if j == i:
@@ -312,21 +306,28 @@ class TrackingFrequently:
                     tmp_label+= str(np.round(p1[j], decimals=2)) + tmp_var
                     if p1[j + 1] >= 0:
                         tmp_label += '+'
-            # print(tmp_label)
+            for valx, valy in zip(tmp_x, tmp_y):
+                tmp = 0
+                for j in range(len(p1)):
+                    tmp += p1[j] * (valx ** (len(p1) - 1 - j))
+                xres.append(tmp)
+
+            res = r2_score(tmp_y, xres)
+            ret_x = []
+            for valx in x:
+                tmp = 0
+                for j in range(len(p1)):
+                    tmp += p1[j] * (valx ** (len(p1) - 1 - j))
+                ret_x.append(tmp)
             ylist.append(np.poly1d(p1)(x))
-            # plt.plot(x, , label=)
             labels.append(tmp_label)
-
             label.append(tmp_label)
-        # plt.legend()
-        # plt.xticks(list(plt.xticks())[0], [ut.mjd2datetime(int(s)).strftime("%y.%m.%d") for s in list(plt.xticks())[0]])
-        # plt.colorbar()
-        # plt.show()
-
-
-        return x, np.poly1d(p1)(x), labels
+        return x, ret_x, labels, p1, res
 
     def slide_fit(self):
+        '''
+        !!!CAN NOT USE!!!
+        '''
         cal = CalVariation()
         data_key = list(self.data_index.keys())
         data_key.sort()
@@ -411,8 +412,12 @@ class TrackingFrequently:
         plt.title('all')
         plt.legend()
         plt.show()
+#     def
 
 class CalVariation:
+    '''
+    !!!CAN NOT USE!!!
+    '''
     def __init__(self):
         self.data = []
 
@@ -483,7 +488,7 @@ if __name__ == "__main__":
     tf = TrackingFrequently()
     # tf.source_keywoed = args[1] + "_" + args[2] + "_"
     tf.source = 'IRAS15193+31'  # 天体名
-    tf.ref_freq = 'H2O'  # 分子名（H2O,SiOなど）
+    tf.ref_freq = 'SiOv1'  # 分子名（H2O,SiOなど）
     tf.directory = '/Users/yhamae/OneDrive/astro/FLASHING/peak/'  # ファイルを検索するディレクトリ
     tf.oname = '/Users/yhamae/OneDrive/astro/FLASHING/dynamic_spectrum/IRAS15193+31_H20.txt'  # 書き出すテキストファイルの名前
     tf.source_keywoed = tf.source + "_" + tf.ref_freq + "_"

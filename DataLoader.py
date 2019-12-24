@@ -12,9 +12,9 @@ import Util as util
 
 class GetSpectrum:
     def __init__(self):
-        self.channel = 0
-        self.freq = 0
-        self.T = 0
+        self.channel = []
+        self.freq = []
+        self.T = []
         self.filename = ""
         self.mode = 0
         self.date = ""
@@ -54,9 +54,11 @@ class GetSpectrum:
                     if 'd' in self.mode:
                         print("------------------------------")
                         print('>>>     {0:>5}  {1:>10.9}  {1:>10.9}'.format(tmp[0], tmp[1], tmp[2]))
-                    self.channel.append(tmp[0])
-                    self.freq.append(tmp[1])
-                    self.T.append(tmp[2])
+                    
+                    self.channel.append(float(tmp[0]))
+                    self.freq.append(float(tmp[1]))
+                    self.T.append(float(tmp[2]))
+                    
 
                 del tmp
                 
@@ -130,13 +132,19 @@ class GetPeak:
         try:
             with codecs.open(self.fname, 'r', 'utf-8', 'ignore') as f:
                 line = f.readlines()
+#                 print(line)
             for tmp in line:
                 if 'MJD' in tmp:
                     self.date = tmp.split("=")[1].strip('\n')
-                if tmp[0] != "#" and tmp[0] != "\n":
-                    self.channel.append(tmp.split()[0])
-                    self.peak_freq.append(tmp.split()[1])
-                    self.peak_val.append(tmp.split()[2])
+                if tmp[0] != "#" and tmp[0] != "\n" and len(tmp.split()) >= 3:
+#                     print(len(tmp.split()))
+#                     print(tmp)
+                    try:
+                        self.channel.append(float(tmp.split()[0]))
+                        self.peak_freq.append(float(tmp.split()[1]))
+                        self.peak_val.append(float(tmp.split()[2]))
+                    except ValueError:
+                        pass
                     
             # for i in range(0, len(line)):
             #     if line[i][0] != "#"
